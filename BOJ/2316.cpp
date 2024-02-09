@@ -2,7 +2,7 @@
 using namespace std;
 
 const int INF = 987654321;
-const int MAX_V = 2003;
+const int MAX_V = 801;
 
 vector<int> adj[MAX_V];
 int capacity[MAX_V][MAX_V], flow[MAX_V][MAX_V];
@@ -38,38 +38,27 @@ int networkFlow(int source, int sink) {
 }
 
 void solve() {
-	int n, m, k;
+	int n, p;
 	// source: 0, 임시: 2001, 직원: 1 ~ n, 일: 1001 ~ 1001 + m, sink: 2002
-	cin >> n >> m >> k;
-	for (int i = 1; i <= n; ++i) {
-		capacity[0][i] = 1;
-		adj[0].push_back(i);
-		adj[i].push_back(0);
+	cin >> n >> p;
+	for (int i = 3; i <= n; ++i) {
+		adj[i].push_back(i + n);
+		adj[i + n].push_back(i);
+		capacity[i][i + n] = 1;
 	}
-	adj[0].push_back(n + m + 1);
-	adj[n + m + 1].push_back(0);
-	capacity[0][n + m + 1] = k;
-	for (int i = 1; i <= n; ++i) {
-		capacity[n + m + 1][i] = 1;
-		adj[n + m + 1].push_back(i);
-		adj[i].push_back(n + m + 1);
+	for (int i = 0; i < p; ++i) {
+		int u, v; cin >> u >> v;
+		if (u != 1 && u != 2) u += n;
+		adj[u].push_back(v);
+		capacity[u][v] = 1;
+		adj[v].push_back(u);
+		if (u != 1 && u != 2) u -= n;
+		if (v != 1 && v != 2) v += n;
+		adj[u].push_back(v);
+		adj[v].push_back(u);
+		capacity[v][u] = 1;
 	}
-	for (int i = 1; i <= n; ++i) {
-		int cnt; cin >> cnt;
-		while (cnt--) {
-			int w; cin >> w;
-			w += n;
-			capacity[i][w] = 1;
-			adj[i].push_back(w);
-			adj[w].push_back(i);
-		}
-	}
-	for (int i = n + 1; i <= n + m; ++i) {
-		capacity[i][n + m + 2] = 1;
-		adj[n + m + 2].push_back(i);
-		adj[i].push_back(n + m + 2);
-	}
-	auto ans = networkFlow(0, n + m + 2);
+	auto ans = networkFlow(1, 2);
 	cout << ans;
 }
 
