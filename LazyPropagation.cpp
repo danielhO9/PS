@@ -54,9 +54,8 @@ LL query(vector<LL> &tree, vector<LL> &lazy, int node, int start, int end, int l
     return lsum + rsum;
 }
 
-int main() {
-    ios_base::sync_with_stdio(0); cin.tie(0);
-    int n, m, k;
+void solve() {
+	int n, m, k;
     cin >> n >> m >> k;
     vector<LL> a(n);
     int h = (int)ceil(log2(n));
@@ -67,7 +66,7 @@ int main() {
     for (int i = 0; i < n; ++i) {
         cin >> a[i];
     }
-    init(a, tree, 1, 0, n-1);
+    init(a, tree, 1, 0, n - 1);
     while (m--) {
         int what;
         cin >> what;
@@ -81,5 +80,4 @@ int main() {
             cout << query(tree, lazy, 1, 0, n - 1, left - 1, right - 1) << '\n';
         }
     }
-    return 0;
 }
