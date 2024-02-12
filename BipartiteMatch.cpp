@@ -1,10 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
-const int MAX_N = 987654321;
 
 int n, m;
-vector<int> adj[MAX_N];
-
+vector<vector<int>> adj(987654321);
 vector<int> aMatch, bMatch;
 vector<bool> visited;
 
@@ -30,4 +28,8 @@ int bipartiteMatch() {
 		if (dfs(start)) ++size;
 	}
 	return size;
+}
+
+void solve() {
+	bipartiteMatch();
 }
