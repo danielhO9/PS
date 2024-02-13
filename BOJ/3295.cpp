@@ -31,6 +31,18 @@ int bipartiteMatch() {
 }
 
 void solve() {
-	adj = vector<vector<int>>(987654321);
-	bipartiteMatch();
+	cin >> n >> m;
+	adj = vector<vector<int>>(n);
+	while (m--) {
+		int u, v; cin >> u >> v;
+		adj[u].push_back(v);
+	}
+	m = n;
+	cout << bipartiteMatch() << '\n';
+}
+
+int main() {
+	ios::sync_with_stdio(0); cin.tie(0);
+	int t; cin >> t;
+	while (t--) solve();
 }
