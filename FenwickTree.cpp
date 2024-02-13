@@ -17,9 +17,8 @@ void update(vector<LL> &tree, int i, LL diff) {
     }
 }
 
-int main() {
-	ios::sync_with_stdio(0); cin.tie(0);
-    int n, m, k;
+void solve() {
+	int n, m, k;
     vector<LL> a(n + 1);
     vector<LL> tree(n + 1);
     // for (int i = 1; i <= n; i++) {
@@ -27,5 +26,4 @@ int main() {
     //     update(tree, i, a[i]);
     // }
     // printf("%lld\n",sum(tree, t3) - sum(tree, t2-1));
-    return 0;
 }

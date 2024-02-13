@@ -29,7 +29,7 @@ int DFS(vector<int>& id, int& sccCnt, vector<int>& sccNum, vector<vector<int>>& 
 }
 
 void solve() {
-	int V, E, idcnt;
+	int V, idcnt;
 	vector<int> id(V + 1);
 	int sccCnt = 0;
 	vector<int> sccNum(V + 1);
@@ -38,10 +38,4 @@ void solve() {
 	stack<int> S;
 	vector<vector<int>> SCC;
 	for (int i = 1; i <= V; ++i) if (id[i] == 0) DFS(id, sccCnt, sccNum, graph, finished, S, SCC, idcnt, i);
-}
-
-int main() {
-	ios::sync_with_stdio(0); cin.tie(0);
-	int t; cin >> t;
-	while (t--) solve();
 }
