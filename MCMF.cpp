@@ -76,8 +76,3 @@ void solve() {
 	auto ans = networkFlow(MAX_V, capacity, flow, cost, adj, 0, m + n + 1);
 	cout << ans.first << '\n' << ans.second;
 }
-
-int main() {
-	ios::sync_with_stdio(0); cin.tie(0);
-	solve();
-}
