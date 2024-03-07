@@ -13,8 +13,7 @@ void Union(vector<int>& parents, int x, int y) {
 	parents[x] = minn; parents[y] = minn;
 }
 
-int main() {
-	ios::sync_with_stdio(0); cin.tie(0);
-	int n; vector<int> parent(n + 1);
-	for (int i = 1; i <= n; ++i) parent[i] = i;
+void solve() {
+	int n; vector<int> parents(n + 1);
+	for (int i = 1; i <= n; ++i) parents[i] = i;
 }
