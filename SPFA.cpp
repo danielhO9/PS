@@ -2,45 +2,31 @@
 using namespace std;
 typedef long long ll;
 
-int N, M;
-
-ll dis[501], cycleCnt[501];
-vector<pair<int, ll>> graph[501];
-bool inQ[501];
-queue<int> Q;
-
-bool SPFA(int v) {
-	dis[v] = 0; Q.push(v); inQ[v] = true;
-	while (!Q.empty()) {
-		int here = Q.front(); Q.pop(); inQ[here] = false;
-		for (auto [there, cost]: graph[here]) if (dis[there] > dis[here] + cost) {
-			dis[there] = dis[here] + cost;
+// 빈배열: 음의 사이클 존재
+// V: max vertex number
+vector<ll> SPFA(int src, vector<vector<pair<int, ll>>>& adj, int V) {
+	vector<ll> dist(V + 1, LLONG_MAX), cycleCnt(V + 1, 0); vector<bool> inQ(V + 1, false);
+	dist[src] = 0;
+	queue<int> q;
+	q.push(src); inQ[src] = true;
+	while (!q.empty()) {
+		int here = q.front(); q.pop(); inQ[here] = false;
+		for (auto [there, cost]: adj[here]) if (dist[there] > dist[here] + cost) {
+			dist[there] = dist[here] + cost;
 			if (!inQ[there]) {
 				++cycleCnt[there];
-				if (cycleCnt[there] >= N) return false;
-				Q.push(there);
+				if (cycleCnt[there] >= V) return {};
+				q.push(there);
 				inQ[there] = true;
 			}
 		}
 	}
-	return true;
+	return dist;
 }
 
 void solve() {
-	cin >> N >> M; ll A, B, C;
-	for (int i = 0; i < M; ++i) {
-		cin >> A >> B >> C;
-		graph[A].push_back({B, C});
-	}
-	for (int i = 1; i <= N; ++i) dis[i] = INT32_MAX;
-	if (!SPFA(1)) cout << -1;
-	else for (int i = 2; i <= N; ++i) {
-		if (dis[i] != INT32_MAX) cout << dis[i] << '\n';
-		else cout << -1 << '\n';
-	}
-}
-
-int main() {
-	ios::sync_with_stdio(0); cin.tie(0);
-	solve();
+	// N: max number
+	int N;
+	vector<vector<pair<int, ll>>> adj(N + 1);
+	vector<ll> ans = SPFA(1, adj, N);
 }

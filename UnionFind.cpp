@@ -14,7 +14,8 @@ void Union(vector<int>& parents, int x, int y) {
 }
 
 void solve() {
-	int n;
-	vector<int> parents(n + 1);
-	for (int i = 1; i <= n; ++i) parents[i] = i;
+	// N: max number
+	int N;
+	vector<int> parents(N + 1);
+	for (int i = 0; i <= N; ++i) parents[i] = i;
 }
