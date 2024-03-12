@@ -25,29 +25,48 @@ int dfs(int v, vector<int>& sccNum, vector<vector<int>>& adj, stack<int>& S, vec
 void getSCC(vector<vector<int>>& scc, vector<vector<int>>& adj, vector<int>& sccNum, int& V) {
 	stack<int> S; vector<int> ord(V + 1, -1); int cnt = -1;
 	// 시작점 조절
-	for (int i = 1; i <= V; ++i) if (ord[i] == -1) dfs(i, sccNum, adj, S, scc, ord, cnt);
+	for (int i = 0; i < V; ++i) if (ord[i] == -1) dfs(i, sccNum, adj, S, scc, ord, cnt);
 }
 
 void solve() {
-	// V: max vertex num
-	int V, E; cin >> V >> E;
-	vector<vector<int>> adj(V + 1);
-	for (int i = 0; i < E; ++i) {
+	int N, M; cin >> N >> M;
+	vector<vector<int>> adj(N + 1);
+	for (int i = 0; i < M; ++i) {
 		int A, B; cin >> A >> B;
 		adj[A].push_back(B);
 	}
 	vector<vector<int>> scc;
-	vector<int> sccNum(V + 1, -1);
-	getSCC(scc, adj, sccNum, V);
-	cout << scc.size() << '\n';
-	sort(scc.begin(), scc.end());
-	for (auto i: scc) {
-		for (auto j: i) cout << j << ' ';
-		cout << "-1\n";
+	vector<int> sccNum(N + 1, -1);
+	getSCC(scc, adj, sccNum, N);
+	vector<int> deg(scc.size());
+	vector<vector<int>> nadj(scc.size());
+	for (int i = 0; i < N; ++i) {
+		for (auto j: adj[i]) {
+			if (sccNum[i] != sccNum[j]) {
+				nadj[sccNum[i]].push_back(sccNum[j]);
+				++deg[sccNum[j]];
+			}
+		}
 	}
+	vector<int> ans;
+	for (int i = 0; i < scc.size(); ++i) {
+		if (deg[i] == 0) {
+			ans.push_back(i);
+		}
+	}
+	if (ans.size() != 1) {
+		cout << "Confused\n";
+		cout << '\n';
+		return;
+	}
+	for (auto i: scc[ans[0]]) {
+		cout << i << '\n';
+	}
+	cout << '\n';
 }
 
 int main() {
 	ios::sync_with_stdio(0); cin.tie(0);
-	solve();
+	int t; cin >> t;
+	while (t--) solve();
 }

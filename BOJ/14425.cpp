@@ -33,11 +33,24 @@ struct TrieNode {
 };
 
 void solve() {
+	int N, M; cin >> N >> M;
 	TrieNode* trie = new TrieNode();
-	// string s; cin >> s;
-	// trie->insert(s.c_str());
-	// auto temp = trie->find(s.c_str());
-	// if (temp != NULL && temp->terminal == true) {
+	for (int i = 0; i < N; ++i) {
+		string s; cin >> s;
+		trie->insert(s.c_str());
+	}
+	int cnt = 0; 
+	while (M--) {
+		string s; cin >> s;
+		auto temp = trie->find(s.c_str());
+		if (temp != NULL && temp->terminal == true) {
+			++cnt;
+		}
+	}
+	cout << cnt;
+}
 
-	// }
+int main() {
+	ios::sync_with_stdio(0); cin.tie(0);
+	solve();
 }

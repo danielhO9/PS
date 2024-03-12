@@ -41,14 +41,36 @@ void init(int& V, vector<vector<pair<int, ll>>>& adj, vector<int>& dep, vector<l
 	}
 }
 
+ll distance(int u, int v, vector<int>& dep, vector<ll>& dist, int& h, vector<vector<int>>& f) {
+	int l = lca(u, v, dep, h, f);
+	return dist[u] + dist[v] - dist[l] * 2;
+}
+
+int query(int u, int v, int k, vector<int>& dep, int& h, vector<vector<int>>& f) {
+	--k;
+	int l = lca(u, v, dep, h, f);
+	if (k <= dep[u] - dep[l]) {
+		for (int i = 0; i < h; ++i) if ((k >> i) & 1) {
+			u = f[i][u];
+		}
+		return u;
+	}
+	
+	k = dep[v] - (dep[l] + k - (dep[u] - dep[l]));
+	for (int i = 0; i < h; ++i) if ((k >> i) & 1) {
+		v = f[i][v];
+	}
+	return v;
+}
+
 void solve() {
 	// max vertex number
 	int N; cin >> N;
 	vector<vector<pair<int, ll>>> adj(N + 1);
 	for (int i = 0; i < N - 1; ++i) {
-		int a, b; cin >> a >> b;
-		adj[a].push_back({b, 0});
-		adj[b].push_back({a, 0});
+		int u, v; ll w; cin >> u >> v >> w;
+		adj[u].push_back({v, w});
+		adj[v].push_back({u, w});
 	}
 	vector<int> dep(N + 1); vector<ll> dist(N + 1);
 	int h = (int)ceil(log2(N)); ++h;
@@ -56,8 +78,14 @@ void solve() {
 	init(N, adj, dep, dist, h, f);
 	int M; cin >> M;
 	while (M--) {
-		int a, b; cin >> a >> b;
-		cout << lca(a, b, dep, h, f) << '\n';
+		int type; cin >> type;
+		if (type == 1) {
+			int u, v; cin >> u >> v;
+			cout << distance(u, v, dep, dist, h, f) << '\n';
+		} else {
+			int u, v, k; cin >> u >> v >> k;
+			cout << query(u, v, k, dep, h, f) << '\n';
+		}
 	}
 }
 
