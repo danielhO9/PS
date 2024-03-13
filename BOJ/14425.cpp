@@ -1,33 +1,28 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-const int ALPHABETS = 26;
-
-int toNumber(char ch) { return ch - 'a'; }
-
 struct TrieNode {
-	TrieNode* children[ALPHABETS];
+	unordered_map<char, TrieNode*> children;
 	bool terminal;
 	TrieNode(): terminal(false) {
-		memset(children, 0, sizeof(children));
+
 	}
 	~TrieNode() {
-		for (int i = 0; i < ALPHABETS; ++i) {
-			if (children[i]) delete children[i];
-		}
+		for (auto [i, _]: children) delete children[i];
 	}
 	void insert(const char* key) {
+		cout << *key << '\n';
 		if (*key == 0) terminal = true;
 		else {
-			int next = toNumber(*key);
-			if (children[next] == NULL) children[next] = new TrieNode();
+			int next = *key;
+			if (children.find(next) == children.end()) children[next] = new TrieNode();
 			children[next]->insert(key + 1);
 		}
 	}
-	TrieNode* find(const char* key) {
-		if (*key == 0) return this;
-		int next = toNumber(*key);
-		if (children[next] == NULL) return NULL;
+	bool find(const char* key) {
+		if (*key == 0) return this->terminal;
+		int next = *key;
+		if (children.find(next) == children.end()) return false;
 		return children[next]->find(key + 1);
 	}
 };
@@ -42,8 +37,7 @@ void solve() {
 	int cnt = 0; 
 	while (M--) {
 		string s; cin >> s;
-		auto temp = trie->find(s.c_str());
-		if (temp != NULL && temp->terminal == true) {
+		if (trie->find(s.c_str())) {
 			++cnt;
 		}
 	}
