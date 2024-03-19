@@ -1,8 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
-typedef long long LL;
+typedef long long ll;
 
-void init(vector<LL> &a, vector<LL> &tree, int node, int start, int end) {
+void init(vector<ll> &a, vector<ll> &tree, int node, int start, int end) {
     if (start == end) {
         tree[node] = a[start];
     } else {
@@ -12,7 +12,7 @@ void init(vector<LL> &a, vector<LL> &tree, int node, int start, int end) {
     }
 }
 
-void update_lazy(vector<LL> &tree, vector<LL> &lazy, int node, int start, int end) {
+void update_lazy(vector<ll> &tree, vector<ll> &lazy, int node, int start, int end) {
     if (lazy[node] != 0) {
         tree[node] += (end - start + 1) * lazy[node];
         if (start != end) {
@@ -23,7 +23,7 @@ void update_lazy(vector<LL> &tree, vector<LL> &lazy, int node, int start, int en
     }
 }
 
-void update_range(vector<LL> &tree, vector<LL> &lazy, int node, int start, int end, int left, int right, LL diff) {
+void update_range(vector<ll> &tree, vector<ll> &lazy, int node, int start, int end, int left, int right, ll diff) {
     update_lazy(tree, lazy, node, start, end);
     if (left > end || right < start) {
         return;
@@ -41,7 +41,7 @@ void update_range(vector<LL> &tree, vector<LL> &lazy, int node, int start, int e
     tree[node] = tree[node * 2] + tree[node * 2 + 1];
 }
 
-LL query(vector<LL> &tree, vector<LL> &lazy, int node, int start, int end, int left, int right) {
+ll query(vector<ll> &tree, vector<ll> &lazy, int node, int start, int end, int left, int right) {
     update_lazy(tree, lazy, node, start, end);
     if (left > end || right < start) {
         return 0;
@@ -49,35 +49,20 @@ LL query(vector<LL> &tree, vector<LL> &lazy, int node, int start, int end, int l
     if (left <= start && end <= right) {
         return tree[node];
     }
-    LL lsum = query(tree, lazy, node * 2, start, (start+end) / 2, left, right);
-    LL rsum = query(tree, lazy, node * 2 + 1, (start+end) / 2 + 1, end, left, right);
+    ll lsum = query(tree, lazy, node * 2, start, (start+end) / 2, left, right);
+    ll rsum = query(tree, lazy, node * 2 + 1, (start+end) / 2 + 1, end, left, right);
     return lsum + rsum;
 }
 
 void solve() {
-	int n, m, k;
-    cin >> n >> m >> k;
-    vector<LL> a(n);
+	int n;
+	// 0 ~ n - 1
+    vector<ll> a(n);
     int h = (int)ceil(log2(n));
     int tree_size = (1 << (h + 1));
-    vector<LL> tree(tree_size);
-    vector<LL> lazy(tree_size);
-    m += k;
-    for (int i = 0; i < n; ++i) {
-        cin >> a[i];
-    }
-    init(a, tree, 1, 0, n - 1);
-    while (m--) {
-        int what;
-        cin >> what;
-        if (what == 1) {
-            int left, right; LL diff;
-            cin >> left >> right >> diff;
-            update_range(tree, lazy, 1, 0, n - 1, left - 1, right - 1, diff);
-        } else if (what == 2) {
-            int left, right;
-            cin >> left >> right;
-            cout << query(tree, lazy, 1, 0, n - 1, left - 1, right - 1) << '\n';
-        }
-    }
+    vector<ll> tree(tree_size);
+    vector<ll> lazy(tree_size);
+    // init(a, tree, 1, 0, n - 1);
+	// update_range(tree, lazy, 1, 0, n - 1, left - 1, right - 1, diff);
+	// query(tree, lazy, 1, 0, n - 1, left - 1, right - 1);
 }
