@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;
+const double PI = 3.1415926535;
 
 ll cross(const pair<ll, ll>& a, const pair<ll, ll>& b) { return a.first * b.second - a.second * b.first; }
 ll ccw(const pair<ll, ll>& a, const pair<ll, ll>& b, const pair<ll, ll>& c) {
@@ -24,14 +25,16 @@ vector<pair<ll, ll>> getConvexHull(vector<pair<ll, ll>>& cities) {
 		return cross(a, b) > 0;
 	});
 	vector<pair<ll, ll>> convex;
-	for (auto i = cities.rbegin(); i != cities.rend(); ++i) {
-		if (cross(*cities.rbegin(), *i) == 0) {
-			convex.push_back(*i);
-		} else break;
-	}
-	convex.push_back(cities[0]);
-	for (int i = 1; i < cities.size(); ++i) {
-		if (cross(*cities.rbegin(), cities[i]) == 0) break;
+	convex.push_back(cities[0]); convex.push_back(cities[1]);
+	for (int i = 2; i < cities.size(); ++i) {
+		while (convex.size() >= 2) {
+			pair<ll, ll> b = convex.back(); convex.pop_back();
+			pair<ll, ll> a = convex.back();
+			if (ccw(a, b, cities[i]) > 0) {
+				convex.push_back(b);
+				break;
+			}
+		}
 		convex.push_back(cities[i]);
 	}
 	for (auto& i: convex) {
@@ -41,24 +44,28 @@ vector<pair<ll, ll>> getConvexHull(vector<pair<ll, ll>>& cities) {
 	return convex;
 }
 
+double dis(vector<pair<ll, ll>>& arr, int i, int j) {
+	return sqrt((arr[i].first - arr[j].first) * (arr[i].first - arr[j].first) + (arr[i].second - arr[j].second) * (arr[i].second - arr[j].second));
+}
+
 void solve() {
-	int n; cin >> n;
+	int n, l; cin >> n >> l;
 	vector<pair<ll, ll>> cities;
-	map<pair<ll, ll>, int> M;
 	for (int i = 0; i < n; ++i) {
 		ll x, y; cin >> x >> y;
 		cities.push_back({x, y});
-		M[{x, y}] = i;
 	}
-	vector<pair<ll, ll>> ans = getConvexHull(cities);
-	for (auto i: ans) {
-		cout << M[i] << ' ';
+	vector<pair<ll, ll>> convexHull = getConvexHull(cities);
+	double ans = 0;
+	for (int i = 0; i < int(convexHull.size()) - 1; ++i) {
+		ans += dis(convexHull, i, i + 1);
 	}
-	cout << '\n';
+	ans += dis(convexHull, 0, int(convexHull.size()) - 1);
+	ans += 2 * PI * l;
+	cout << ll(round(ans));
 }
 
 int main() {
 	ios::sync_with_stdio(0); cin.tie(0);
-	int t; cin >> t;
-	while (t--) solve();
+	solve();
 }
