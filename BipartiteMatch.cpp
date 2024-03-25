@@ -33,4 +33,5 @@ void solve() {
 	// 0 ~ n - 1, 0 ~ m - 1
 	vector<vector<int>> adj(n);
 	int ans = bipartiteMatch(n, m, adj);
+	cout << ans;
 }
