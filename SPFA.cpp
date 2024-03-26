@@ -2,10 +2,9 @@
 using namespace std;
 typedef long long ll;
 
-// 빈배열: 음의 사이클 존재
-// V: max vertex number
-vector<ll> spfa(int src, vector<vector<pair<int, ll>>>& adj, int V) {
-	vector<ll> dist(V + 1, LLONG_MAX), cycleCnt(V + 1, 0); vector<bool> inQ(V + 1, false);
+vector<ll> spfa(int src, vector<vector<pair<int, ll>>>& adj) {
+	const int MAX_V = adj.size();
+	vector<ll> dist(MAX_V, LLONG_MAX), cycleCnt(MAX_V, 0); vector<bool> inQ(MAX_V, false);
 	dist[src] = 0;
 	queue<int> q;
 	q.push(src); inQ[src] = true;
@@ -15,7 +14,7 @@ vector<ll> spfa(int src, vector<vector<pair<int, ll>>>& adj, int V) {
 			dist[there] = dist[here] + cost;
 			if (!inQ[there]) {
 				++cycleCnt[there];
-				if (cycleCnt[there] >= V) return {};
+				if (cycleCnt[there] >= MAX_V) return {};
 				q.push(there);
 				inQ[there] = true;
 			}
@@ -24,9 +23,10 @@ vector<ll> spfa(int src, vector<vector<pair<int, ll>>>& adj, int V) {
 	return dist;
 }
 
+// 빈배열: 음의 사이클 존재
 void solve() {
-	// N: max number
-	int N;
-	vector<vector<pair<int, ll>>> adj(N + 1);
-	vector<ll> ans = spfa(1, adj, N);
+	int MAX_V;
+	int src;
+	vector<vector<pair<int, ll>>> adj(MAX_V);
+	vector<ll> ans = spfa(src, adj);
 }

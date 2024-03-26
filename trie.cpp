@@ -44,9 +44,9 @@ struct TrieNode {
 void solve() {
 	TrieNode* trie = new TrieNode();
 	// string s; cin >> s;
+	// char str[31];
 	// trie->insert(s.c_str());
+	// trie->insert(str);
+	// trie->remove(s.c_str());
 	// auto temp = trie->find(s.c_str());
-	// if (temp != NULL && temp->terminal == true) {
-
-	// }
 }

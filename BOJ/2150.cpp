@@ -22,23 +22,24 @@ int dfs(int v, vector<int>& sccNum, vector<vector<int>>& adj, stack<int>& S, vec
 	return result;
 }
 
-void getSCC(vector<vector<int>>& scc, vector<vector<int>>& adj, vector<int>& sccNum, int& V) {
-	stack<int> S; vector<int> ord(V + 1, -1); int cnt = -1;
-	// 시작점 조절
-	for (int i = 1; i <= V; ++i) if (ord[i] == -1) dfs(i, sccNum, adj, S, scc, ord, cnt);
+void getSCC(int src, vector<vector<int>>& adj, vector<vector<int>>& scc, vector<int>& sccNum) {
+	const int MAX_V = adj.size();
+	stack<int> S; vector<int> ord(MAX_V, -1); int cnt = -1;
+	for (int i = src; i < MAX_V; ++i) if (ord[i] == -1) dfs(i, sccNum, adj, S, scc, ord, cnt);
 }
 
 void solve() {
-	// V: max vertex num
 	int V, E; cin >> V >> E;
-	vector<vector<int>> adj(V + 1);
+	int MAX_V = V + 1;
+	int src = 1;
+	vector<vector<int>> adj(MAX_V);
+	vector<vector<int>> scc;
+	vector<int> sccNum(MAX_V, -1);
 	for (int i = 0; i < E; ++i) {
 		int A, B; cin >> A >> B;
 		adj[A].push_back(B);
 	}
-	vector<vector<int>> scc;
-	vector<int> sccNum(V + 1, -1);
-	getSCC(scc, adj, sccNum, V);
+	getSCC(src, adj, scc, sccNum);
 	cout << scc.size() << '\n';
 	sort(scc.begin(), scc.end());
 	for (auto i: scc) {

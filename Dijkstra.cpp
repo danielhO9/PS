@@ -2,8 +2,6 @@
 using namespace std;
 typedef long long ll;
 
-// MAX_V: max vertex number
-// time complexity: (V+E)logV
 vector<ll> dijkstra(int src, vector<vector<pair<int, ll>>>& adj) {
 	const int MAX_V = adj.size();
 	vector<ll> dist(MAX_V, LLONG_MAX);
@@ -27,6 +25,8 @@ vector<ll> dijkstra(int src, vector<vector<pair<int, ll>>>& adj) {
 	return dist;
 }
 
+// MAX_V: max vertex number
+// time complexity: (V+E)logV
 void solve() {
 	int MAX_V;
 	vector<vector<pair<int, ll>>> adj(MAX_V);
