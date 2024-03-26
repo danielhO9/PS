@@ -12,7 +12,8 @@ void dfs(int v, int p, ll d, vector<vector<int>>& f, vector<int>& dep, vector<ll
     for (auto [u, nd]: adj[v]) if (u != p) dfs(u, v, nd, f, dep, dist, adj);
 }
 
-int lca(int u, int v, vector<int>& dep, int& h, vector<vector<int>>& f) {
+int lca(int u, int v, vector<int>& dep, vector<vector<int>>& f) {
+	const int h = f.size();
     if (dep[u] < dep[v]) swap(u, v);
     int dif = dep[u] - dep[v];
 	for (int i = 0; i < h; ++i) if ((dif >> i) & 1) {
@@ -29,12 +30,12 @@ int lca(int u, int v, vector<int>& dep, int& h, vector<vector<int>>& f) {
     return u;
 }
 
-void init(int& V, vector<vector<pair<int, ll>>>& adj, vector<int>& dep, vector<ll>& dist, int& h, vector<vector<int>>& f) {
+void init(vector<vector<pair<int, ll>>>& adj, vector<int>& dep, vector<ll>& dist, vector<vector<int>>& f) {
+	const int h = f.size(), MAX_V = adj.size();
 	// root: 1
     dfs(1, -1, 0ll, f, dep, dist, adj);
 	for (int i = 1; i < h; ++i) {
-		// 시작점, 끝점 조절
-		for (int j = 1; j <= V; ++j) {
+		for (int j = 0; j < MAX_V; ++j) {
 			if (f[i - 1][j] == -1) f[i][j] = -1;
 			else f[i][j] = f[i - 1][f[i - 1][j]];
 		}
@@ -42,16 +43,15 @@ void init(int& V, vector<vector<pair<int, ll>>>& adj, vector<int>& dep, vector<l
 }
 
 ll distance(int u, int v, vector<int>& dep, vector<ll>& dist, int& h, vector<vector<int>>& f) {
-	int l = lca(u, v, dep, h, f);
+	int l = lca(u, v, dep, f);
 	return dist[u] + dist[v] - dist[l] * 2;
 }
 
 void solve() {
-	// max vertex number
-	int V;
-	vector<vector<pair<int, ll>>> adj(V + 1);
-	vector<int> dep(V + 1); vector<ll> dist(V + 1);
-	int h = (int)ceil(log2(V)); ++h;
-	vector<vector<int>> f(h, vector<int>(V + 1));
-	init(V, adj, dep, dist, h, f);
+	int MAX_V;
+	vector<vector<pair<int, ll>>> adj(MAX_V);
+	vector<int> dep(MAX_V); vector<ll> dist(MAX_V);
+	int h = (int)ceil(log2(MAX_V)); ++h;
+	vector<vector<int>> f(h, vector<int>(MAX_V));
+	init(adj, dep, dist, f);
 }

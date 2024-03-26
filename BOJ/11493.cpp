@@ -66,9 +66,29 @@ void addEdge(int s, int e, ll cap, ll dis, vector<vector<Edge>>& adj) {
 }
 
 void solve() {
-	int MAX_V;
-	int source, sink;
+	int n, m; cin >> n >> m;
+	int MAX_V = n + 2;
+	int source = 0, sink = n + 1;
 	vector<vector<Edge>> adj(MAX_V);
+	while (m--) {
+		int x, y; cin >> x >> y;
+		addEdge(x, y, INF, 1, adj);
+		addEdge(y, x, INF, 1, adj);
+	}
+	for (int i = 1; i <= n; ++i) {
+		int col; cin >> col;
+		if (col == 0) addEdge(i, sink, 1, 0, adj);
+	}
+	for (int i = 1; i <= n; ++i) {
+		int col; cin >> col;
+		if (col == 0) addEdge(source, i, 1, 0, adj);
+	}
 	auto ans = networkFlow(source, sink, adj);
-	cout << ans.first << '\n' << ans.second;
+	cout << ans.second << '\n';
+}
+
+int main() {
+	ios::sync_with_stdio(0); cin.tie(0);
+	int t; cin >> t;
+	while (t--) solve();
 }

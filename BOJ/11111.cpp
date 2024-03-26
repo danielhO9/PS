@@ -3,6 +3,15 @@ using namespace std;
 typedef long long ll;
 
 const ll INF = 987654321;
+const ll table[5][5] = {
+	{10, 8, 7, 5, 1},
+	{8, 6, 4, 3, 1},
+	{7, 4, 3, 2, 1},
+	{5, 3, 2, 2, 1},
+	{1, 1, 1, 1, 0}
+};
+const int dy[4] = {-1, 0, 1, 0};
+const int dx[4] = {0, 1, 0, -1};
 
 struct Edge {
 	int vertex;
@@ -66,9 +75,36 @@ void addEdge(int s, int e, ll cap, ll dis, vector<vector<Edge>>& adj) {
 }
 
 void solve() {
-	int MAX_V;
-	int source, sink;
+	int N, M; cin >> N >> M;
+	int tofu[N][M];
+	for (int i = 0; i < N; ++i) for (int j = 0; j < M; ++j) {
+		char c; cin >> c;
+		tofu[i][j] = min(c - 'A', 4);
+	}
+	int MAX_V = N * M + 2;
+	int source = N * M, sink = N * M + 1;
 	vector<vector<Edge>> adj(MAX_V);
+	for (int i = 0; i < N; ++i) for (int j = 0; j < M; ++j) {
+		int num = i * M + j;
+		if ((i + j) % 2 == 0) {
+			addEdge(source, num, 1, 0, adj);
+			for (int k = 0; k < 4; ++k) {
+				int ny = i + dy[k], nx = j + dx[k];
+				if (0 <= ny && ny < N && 0 <= nx && nx < M) {
+					int nnum = ny * M + nx;
+					addEdge(num, nnum, 1, -table[tofu[i][j]][tofu[ny][nx]], adj);
+				}
+			}
+			addEdge(num, sink, 1, 0, adj);
+		} else {
+			addEdge(num, sink, 1, 0, adj);
+		}
+	}
 	auto ans = networkFlow(source, sink, adj);
-	cout << ans.first << '\n' << ans.second;
+	cout << -ans.second;
+}
+
+int main() {
+	ios::sync_with_stdio(0); cin.tie(0);
+	solve();
 }

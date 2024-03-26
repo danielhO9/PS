@@ -1,30 +1,41 @@
 #include <bits/stdc++.h>
 using namespace std;
+typedef long long ll;
 
-const int INF = 987654321;
-const int MAX_V = 802;
-int n, m;
+const ll INF = 987654321;
 
-int capacity[MAX_V][MAX_V], flow[MAX_V][MAX_V], cost[MAX_V][MAX_V];
-vector<int> adj[MAX_V];
+struct Edge {
+	int vertex;
+	ll capacity;
+	ll cost;
+	int reverse;
+	ll flow = 0;
+};
 
-pair<int, int> networkFlow(int source, int sink) {
-	memset(flow, 0, sizeof(flow));
-	int totalFlow = 0;
-	int totalCost = 0;
+pair<ll, ll> networkFlow(int source, int sink, vector<vector<Edge>>& adj) {
+	const int MAX_V = adj.size();
+	for (int i = 0; i < MAX_V; ++i) for (Edge& j: adj[i]) j.flow = 0;
+	ll totalFlow = 0;
+	ll totalCost = 0;
+	int parent[MAX_V], ind[MAX_V];
+	bool inQ[MAX_V];
 	while (true) {
-		vector<int> parent(MAX_V, -1);
-		vector<int> dis(MAX_V, INF);
-		vector<bool> inQ(MAX_V, false);
+		memset(parent, -1, sizeof(parent));
+		memset(ind, -1, sizeof(ind));
+		memset(inQ, 0, sizeof(inQ));
+		vector<ll> dis(MAX_V, INF);
 		queue<int> q;
 		dis[source] = 0; inQ[source] = true; q.push(source);
 		parent[source] = source;
 		while (!q.empty()) {
 			int here = q.front(); q.pop(); inQ[here] = false;
-			for (auto there: adj[here]) {
-				if (capacity[here][there] - flow[here][there] > 0 && dis[there] > dis[here] + cost[here][there]) {
-					dis[there] = dis[here] + cost[here][there];
+			for (int i = 0; i < adj[here].size(); ++i) {
+				Edge& edge = adj[here][i];
+				int there = edge.vertex;
+				if (edge.capacity - edge.flow > 0 && dis[there] > dis[here] + edge.cost) {
+					dis[there] = dis[here] + edge.cost;
 					parent[there] = here;
+					ind[there] = i;
 					if (!inQ[there]) {
 						q.push(there);
 						inQ[there] = true;
@@ -33,49 +44,51 @@ pair<int, int> networkFlow(int source, int sink) {
 			}
 		}
 		if (parent[sink] == -1) break;
-		int amount = INF;
+		ll amount = INF;
 		for (int p = sink; p != source; p = parent[p]) {
-			amount = min(capacity[parent[p]][p] - flow[parent[p]][p], amount);
+			int index = ind[p];
+			Edge& edge = adj[parent[p]][index];
+			amount = min(edge.capacity - edge.flow, amount);
 		}
 		for (int p = sink; p != source; p = parent[p]) {
-			flow[parent[p]][p] += amount;
-			flow[p][parent[p]] -= amount;
-			totalCost += amount * cost[parent[p]][p];
-			// cout << p << ' ';
+			int index = ind[p];
+			Edge& edge = adj[parent[p]][index];
+			edge.flow += amount;
+			adj[edge.vertex][edge.reverse].flow -= amount;
+			totalCost += amount * edge.cost;
 		}
 		totalFlow += amount;
-		// cout << totalCost << '\n';
 	}
 	return make_pair(totalFlow, totalCost);
+}
+
+void addEdge(int s, int e, ll cap, ll dis, vector<vector<Edge>>& adj) {
+	adj[s].push_back({e, cap, dis, (int)adj[e].size()});
+	adj[e].push_back({s, 0, -dis, (int)adj[s].size() - 1});
+}
+
+void solve() {
+	// 일: 1 - m, 직원: m + 1 - m + n, source: 0, sink: m + n + 1
+	int N, M; cin >> N >> M;
+	int MAX_V = N + M + 2;
+	int source = 0, sink = N + M + 1;
+	vector<vector<Edge>> adj(MAX_V);
+	for (int i = M + 1; i <= M + N; ++i) addEdge(0, i, 1, 0, adj);
+	for (int i = M + 1; i <= M + N; ++i) {
+		int t; cin >> t;
+		while (t--) {
+			int num; cin >> num;
+			int dis; cin >> dis;
+			addEdge(i, num, 1, dis, adj);
+		}
+	}
+	for (int i = 1; i <= M; ++i) addEdge(i, M + N + 1, 1, 0, adj);
+	auto ans = networkFlow(source, sink, adj);
+	cout << ans.first << '\n' << ans.second;
 }
 
 
 int main() {
 	ios::sync_with_stdio(0); cin.tie(0);
-	// 일: 1 - m, 직원: m + 1 - m + n, source: 0, sink: m + n + 1
-	cin >> n >> m;
-	for (int i = m + 1; i <= m + n; ++i) {
-		capacity[0][i] = 1;
-		adj[0].push_back(i);
-		adj[i].push_back(0);
-	}
-	for (int i = m + 1; i <= m + n; ++i) {
-		int t; cin >> t;
-		for (int j = 1; j <= t; ++j) {
-			int num;
-			cin >> num;
-			cin >> cost[i][num];
-			cost[num][i]= -cost[i][num];
-			capacity[i][num] = 1;
-			adj[i].push_back(num);
-			adj[num].push_back(i);
-		}
-	}
-	for (int i = 1; i <= m; ++i) {
-		capacity[i][m + n + 1] = 1;
-		adj[i].push_back(m + n + 1);
-		adj[m + n + 1].push_back(i);
-	}
-	auto ans = networkFlow(0, m + n + 1);
-	cout << ans.first << '\n' << ans.second;
+	solve();
 }

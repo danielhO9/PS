@@ -2,9 +2,11 @@
 using namespace std;
 typedef long long ll;
 
-// V: max vertex number
-vector<ll> dijkstra(int src, vector<vector<pair<int, ll>>>& adj, int V) {
-	vector<ll> dist(V + 1, LLONG_MAX);
+// MAX_V: max vertex number
+// time complexity: (V+E)logV
+vector<ll> dijkstra(int src, vector<vector<pair<int, ll>>>& adj) {
+	const int MAX_V = adj.size();
+	vector<ll> dist(MAX_V, LLONG_MAX);
 	dist[src] = 0;
 	priority_queue<pair<ll, int>> pq;
 	pq.push(make_pair(0, src));
@@ -23,4 +25,10 @@ vector<ll> dijkstra(int src, vector<vector<pair<int, ll>>>& adj, int V) {
 		}
 	}
 	return dist;
+}
+
+void solve() {
+	int MAX_V;
+	vector<vector<pair<int, ll>>> adj(MAX_V);
+	vector<ll> ans = dijkstra(1, adj);
 }
