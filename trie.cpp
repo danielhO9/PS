@@ -47,6 +47,6 @@ void solve() {
 	// char str[31];
 	// trie->insert(s.c_str());
 	// trie->insert(str);
+	// auto res = trie->find(s.c_str());
 	// trie->remove(s.c_str());
-	// auto temp = trie->find(s.c_str());
 }
