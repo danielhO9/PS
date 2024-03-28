@@ -18,10 +18,10 @@ void update(vector<ll> &tree, int i, ll diff) {
 }
 
 void solve() {
-	int n;
-	// 1 ~ n
-    vector<ll> a(n + 1);
-    vector<ll> tree(n + 1);
-    // for (int i = 1; i <= n; i++) update(tree, i, a[i]);
+	// 1 ~ MAX_N
+	int MAX_N;
+    vector<ll> a(MAX_N + 1);
+    vector<ll> tree(MAX_N + 1);
+    // for (int i = 1; i <= MAX_N; i++) update(tree, i, a[i]);
 	// sum(tree, i)
 }

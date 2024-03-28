@@ -14,8 +14,8 @@ void init(vector<ll>& a, vector<ll>& tree, int node, int start, int end) {
 void update(vector<ll>& a, vector<ll>& tree, int node, int start, int end, int index, ll val) {
 	if (index < start || index > end) return;
 	if (start == end) {
-		a[index] = val;
-		tree[node] = val;
+		a[index] += val;
+		tree[node] += val;
 		return;
 	}
 	update(a, tree, node * 2, start, (start + end) / 2, index, val);
@@ -31,14 +31,41 @@ ll query(vector<ll>& tree, int node, int start, int end, int left, int right) {
 	return lsum + rsum;
 }
 
+int in[100001], out[100001], cnt = -1;
+vector<int> adj[100001];
+void dfs(int v, int p) {
+	in[v] = ++cnt;
+	for (int u: adj[v]) if (u != p) dfs(u, v);
+	out[v] = cnt;
+}
+
 void solve() {
-	// 0 ~ MAX_N - 1
-	int MAX_N;
+	int n, m; cin >> n >> m;
+	for (int i = 1; i <= n; ++i) {
+		int p; cin >> p;
+		if (p == -1) continue;
+		adj[i].push_back(p);
+		adj[p].push_back(i);
+	}
+	dfs(1, 0);
+	int MAX_N = n + 1;
 	vector<ll> arr(MAX_N);
 	int h = (int)ceil(log2(MAX_N));
 	int tree_size = (1 << (h + 1));
 	vector<ll> tree(tree_size);
-	// init(arr, tree, 1, 0, MAX_N - 1);
-	// update(arr, tree, 1, 0, MAX_N - 1, cur, 30);
-	// query(tree, 1, 0, MAX_N - 1, 0, cur);
+	while (m--) {
+		int what; cin >> what;
+		if (what == 1) {
+			ll i, w; cin >> i >> w;
+			update(arr, tree, 1, 0, MAX_N - 1, in[i], w);
+		} else {
+			int i; cin >> i;
+			cout << query(tree, 1, 0, MAX_N - 1, in[i], out[i]) << '\n';
+		}
+	}
+}
+
+int main() {
+	ios::sync_with_stdio(0); cin.tie(0);
+	solve();
 }

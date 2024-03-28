@@ -14,24 +14,24 @@ bool dfs(int a, vector<int>& aMatch, vector<int>& bMatch, vector<bool>& visited,
 	return false;
 }
 
-int bipartiteMatch(int& n, int& m, vector<vector<int>>& adj) {
-	vector<int> aMatch = vector<int>(n, -1);
-	vector<int> bMatch = vector<int>(m, -1);
+int bipartiteMatch(int& MAX_N, int& MAX_M, vector<vector<int>>& adj) {
+	vector<int> aMatch = vector<int>(MAX_N, -1);
+	vector<int> bMatch = vector<int>(MAX_M, -1);
 	int size = 0;
-	vector<bool> visited(n, false);
-	for (int start = 0; start < n; ++start) {
+	vector<bool> visited(MAX_N, false);
+	for (int start = 0; start < MAX_N; ++start) {
 		if (dfs(start, aMatch, bMatch, visited, adj)) {
 			++size;
-			for (int i = 0; i < n; ++i) visited[i] = false;
+			for (int i = 0; i < MAX_N; ++i) visited[i] = false;
 		}
 	}
 	return size;
 }
 
 void solve() {
-	int n, m;
-	// 0 ~ n - 1, 0 ~ m - 1
-	vector<vector<int>> adj(n);
-	int ans = bipartiteMatch(n, m, adj);
+	int MAX_N, MAX_M;
+	// 0 ~ MAX_N - 1, 0 ~ MAX_M - 1
+	vector<vector<int>> adj(MAX_N);
+	int ans = bipartiteMatch(MAX_N, MAX_M, adj);
 	cout << ans;
 }

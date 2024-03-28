@@ -58,7 +58,6 @@ vector<pair<ll, ll>> getConvexHull(vector<pair<ll, ll>> points) {
 }
 
 void solve() {
-	int n;
 	vector<pair<ll, ll>> points;
 	vector<pair<ll, ll>> convexHull = getConvexHull(points);
 }
