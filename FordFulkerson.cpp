@@ -53,6 +53,7 @@ void addEdge(int s, int e, ll c, vector<vector<Edge>>& adj) {
 	adj[e].push_back({s, 0, (int)adj[s].size() - 1});
 }
 
+// time complexity: V*E^2
 void solve() {
 	int MAX_V;
 	int source, sink;

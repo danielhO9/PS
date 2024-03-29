@@ -23,6 +23,7 @@ vector<ll> spfa(int src, vector<vector<pair<int, ll>>>& adj) {
 	return dist;
 }
 
+// time complexity: V+E
 // 빈배열: 음의 사이클 존재
 void solve() {
 	int MAX_V;

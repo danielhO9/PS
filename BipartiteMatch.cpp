@@ -28,6 +28,7 @@ int bipartiteMatch(int& MAX_N, int& MAX_M, vector<vector<int>>& adj) {
 	return size;
 }
 
+// time complexity: V*E
 void solve() {
 	int MAX_N, MAX_M;
 	// 0 ~ MAX_N - 1, 0 ~ MAX_M - 1

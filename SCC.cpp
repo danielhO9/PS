@@ -28,6 +28,7 @@ void getSCC(int src, vector<vector<int>>& adj, vector<vector<int>>& scc, vector<
 	for (int i = src; i < MAX_V; ++i) if (ord[i] == -1) dfs(i, sccNum, adj, S, scc, ord, cnt);
 }
 
+// time complexity: V+E
 void solve() {
 	int MAX_V;
 	int src;
