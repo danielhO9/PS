@@ -47,3 +47,35 @@ vector<ll> multiply(vector<ll> &A, vector<ll> &B) {
 	while (ret.back() == 0) ret.pop_back();
     return ret;
 }
+
+void solve() {
+	int nu, nm, nl;
+	vector<ll> X(60001, 0), Y(60001, 0);
+	vector<ll> res(120001, 0);
+	cin >> nu;
+	for (int i = 0; i < nu; ++i) {
+		int cor; cin >> cor; cor += 3e4;
+		++X[cor];
+	}
+	cin >> nm;
+	for (int i = 0; i < nm; ++i) {
+		int cor; cin >> cor; cor += 3e4;
+		++res[cor * 2];
+	}
+	cin >> nl;
+	for (int i = 0; i < nl; ++i) {
+		int cor; cin >> cor; cor += 3e4;
+		++Y[cor];
+	}
+	vector<ll> sum = multiply(X, Y);
+	ll ans = 0;
+	for (int i = 0; i < 120001; ++i) if (res[i] != 0) {
+		ans += sum[i];
+	}
+	cout << ans;
+}
+
+int main() {
+	ios::sync_with_stdio(0); cin.tie(0);
+	solve();
+}
