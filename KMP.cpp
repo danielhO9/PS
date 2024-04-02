@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+// S[...i] 접두사와 접미사가 같은 최대 길이
 vector<int> getPartialMatch(const string& N) {
 	int m = N.size(); 
 	vector<int> pi(m, 0);
