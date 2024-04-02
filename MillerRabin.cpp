@@ -17,6 +17,8 @@ ll pow(ll a, ll b, ll MOD) {
 }
 
 bool millerRabin(ll n) {
+	// int -> type 0
+	// ll -> type 1
 	int type = 1;
 	if (type == 1 && n < 40) {
 		for (auto i: a[type]) if (i == n) return true;

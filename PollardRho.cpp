@@ -20,6 +20,8 @@ __int128_t pow(__int128_t a, __int128_t b, __int128_t MOD) {
 }
 
 bool millerRabin(__int128_t n) {
+	// int -> type 0
+	// ll -> type 1
 	int type = 1;
 	if (type == 1 && n < 40) {
 		for (auto i: a[type]) if (i == n) return true;
