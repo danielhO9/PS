@@ -21,6 +21,7 @@ vector<int> getPartialMatch(const string& N) {
 	return pi;
 }
 
+// H의 부분 문자열이 N인 index
 vector<int> kmpSearch(const string& H, const string& N) {
 	int n = H.size(), m = N.size();
 	vector<int> ret;

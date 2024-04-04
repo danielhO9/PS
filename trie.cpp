@@ -49,4 +49,5 @@ void solve() {
 	// trie->insert(str);
 	// auto res = trie->find(s.c_str());
 	// trie->remove(s.c_str());
+	delete trie;
 }
