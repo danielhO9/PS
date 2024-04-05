@@ -31,8 +31,8 @@ for i in range(1, n):
         print(deque[index][0] * a[i] + deque[index][1])
 if n == 1:
     print(0)
-# 5 0
-# 4 10
+# -5 0
+# -4 10
 # 3 15
 # 2 20
 # 0 25

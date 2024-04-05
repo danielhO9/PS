@@ -1,46 +1,57 @@
-#include <iostream>
-#include <vector>
-#include <tuple>
-
+#include <bits/stdc++.h>
 using namespace std;
+typedef long long ll;
+ll INF = LLONG_MAX;
 
 struct Line {
-    int slope;
-    long long y_value;
-    double intersection;
+	mutable ll k, m;
+    mutable double p;
+	bool operator < (const Line& o) const { return k < o.k; }
+	bool operator < (ll x) const { return p < x; }
 };
 
-double meetPoint(tuple<int, long long, double>& line1, const tuple<int, long long>& line2) {
-    return (double)(get<1>(line2) - get<1>(line1)) / (get<0>(line1) - get<0>(line2));
+struct LineContainer : multiset<Line, less<>> {
+	double div(ll a, ll b) {
+		return (double) a / b;
+    }
+	bool isect(iterator x, iterator y) {
+		if (y == end()) return x->p = INF, 0;
+		if (x->k == y->k) x->p = x->m > y->m ? INF : -INF;
+		else x->p = div(y->m - x->m, x->k - y->k);
+		return x->p >= y->p;
+	}
+	void add(ll k, ll m) {
+		auto z = insert({k, m, 0}), y = z++, x = y;
+		while (isect(y, z)) z = erase(z);
+		if (x != begin() && isect(--x, y)) isect(x, y = erase(y));
+		while ((y = x) != begin() && (--x)->p >= y->p) isect(x, erase(y));
+	}
+	ll query(ll x) {
+		assert(!empty());
+		auto l = *lower_bound(x);
+		return l.k * x + l.m;
+	}
+};
+
+void solve() {
+	int n; cin >> n;
+	vector<ll> a(n), b(n);
+	for (int i = 0; i < n; ++i) cin >> a[i];
+	for (int i = 0; i < n; ++i) cin >> b[i];
+	LineContainer cht;
+	// dp(i) = min(dp(j) + b[j] * a[i])
+	cht.add(-b[0], 0);
+	for (int i = 1; i < n; ++i) {
+		if (i == n - 1) {
+			cout << -cht.query(a[i]);
+			break;
+		}
+		cht.add(-b[i], cht.query(a[i]));
+	}
+	if (n == 1) cout << 0;
 }
 
 int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    // n 입력
-    int n;
-    cin >> n;
-    // a, b 입력
-    int a[n], b[n];
-    for(int i=0; i<n; i++) cin >> a[i];
-    for(int i=0; i<n; i++) cin >> b[i];
-
-    vector<tuple<int, long long, double>> deque;
-    deque.emplace_back(b[0], 0LL, 0.0);
-    int index = 0;
-    for (int i = 1; i < n; i++) {
-        while (index != deque.size() - 1 && get<2>(deque[index + 1]) < a[i]) {
-            index++;
-        }
-        while (get<2>(deque.back()) >= meetPoint(deque.back(), tuple<int, long long> (b[i], (long long) get<0>(deque[index]) * a[i] + get<1>(deque[index])))) {
-            if (index == deque.size() - 1) {
-                index -= 1;
-            }
-            deque.pop_back();
-        }
-        deque.push_back({b[i], (long long) get<0>(deque[index]) * a[i] + get<1>(deque[index]), meetPoint(deque.back(), tuple<int, long long> (b[i], (long long) get<0>(deque[index]) * a[i] + get<1>(deque[index])))});
-        if (i == n - 1) cout << (long long) get<0>(deque[index]) * a[i] + get<1> (deque[index]) << "\n";
-    }
-    if (n == 1) cout << 0 << "\n";
-    return 0;
+	ios::sync_with_stdio(0); cin.tie(0);
+	solve();
 }
