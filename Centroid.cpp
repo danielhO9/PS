@@ -1,29 +1,33 @@
 #include <bits/stdc++.h>
 using namespace std;
-typedef long long LL;
+typedef long long ll;
 
-int sz[100000], centP[100000]; bool visited[100000];
+struct Vertex {
+	int e; ll w;
+};
 
-int getSize(vector<vector<pair<int, LL>>>& graph, int v, int p){
+vector<int> sz;
+vector<bool> vis;
+
+int getSize(vector<vector<Vertex>>& adj, int v, int p){
     sz[v] = 1;
-    for(auto [i, _]: graph[v]) if(i != p && !visited[i]) sz[v] += getSize(graph, i, v);
+    for(auto i: adj[v]) if (i.e != p && !vis[i.e]) sz[v] += getSize(adj, i.e, v);
     return sz[v];
 }
 
-int getCent(vector<vector<pair<int, LL>>>& graph, int v, int p, int csz){
-    for(auto [i, _]: graph[v]) if(i != p && !visited[i] && sz[i] * 2 > csz) return getCent(graph, i, v, csz);
+int getCent(vector<vector<Vertex>>& adj, int v, int p, int& sub){
+    for(auto i: adj[v]) if (i.e != p && !vis[i.e] && sz[i.e] * 2 > sub) return getCent(adj, i.e, v, sub);
     return v;
 }
 
-void getCentP(vector<vector<pair<int, LL>>>& graph, int v, int p) {
-    getSize(graph, v, p); int csz = sz[v]; int cent = getCent(graph, v, p, csz);
-    visited[cent] = true; centP[cent] = p;
-    for (auto [i, _]: graph[cent]) if (!visited[i]) getCentP(graph, i, cent);
+int centroid(vector<vector<Vertex>>& adj, int v, int p) {
+    getSize(adj, v, p); int sub = sz[v]; 
+	return getCent(adj, v, p, sub);
 }
 
-int main() {
-    ios::sync_with_stdio(0); cin.tie(0);
-	int N; cin >> N;
-	vector<vector<pair<int, LL>>> graph(N);
-    getCentP(graph, 0, -1);
+void solve() {
+	int MAX_N;
+	vector<vector<Vertex>> adj(MAX_N);
+	sz.resize(MAX_N); vis = vector<bool>(MAX_N, false);
+	centroid(adj, 0, -1);
 }
