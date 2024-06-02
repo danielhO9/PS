@@ -1,2 +1,2 @@
-
-	for (auto i: ans1) cout << i << ' ';
+4 10000
+4 1
