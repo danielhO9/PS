@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int cache[1500][1500][3];
+int cache[1501][1501][3];
 string S = "";
 
 int matchCache(int l, int r, int t) {
