@@ -2,7 +2,7 @@
 using namespace std;
 typedef long long ll;
 
-const ll INF = 987654321;
+const ll INF = 1e16;
 
 struct Edge {
 	int vertex;
@@ -44,7 +44,7 @@ pair<ll, ll> networkFlow(int source, int sink, vector<vector<Edge>>& adj) {
 			}
 		}
 		if (parent[sink] == -1) break;
-		ll amount = INF;
+		ll amount = LLONG_MAX;
 		for (int p = sink; p != source; p = parent[p]) {
 			Edge& edge = adj[parent[p]][ind[p]];
 			amount = min(edge.capacity - edge.flow, amount);
@@ -67,8 +67,28 @@ void addEdge(int s, int e, ll cap, ll dis, vector<vector<Edge>>& adj) {
 
 // time complexity: (V+E)*F
 void solve() {
-	int MAX_V;
-	int source, sink;
+	int N, P; cin >> N >> P;
+	ll A[N + 1][N + 1], C[N + 1][N + 1], O[N + 1][N + 1];
+	for (int i = 1; i <= N; ++i) for (int j = i + 1; j <= N; ++j) cin >> C[i][j];
+	for (int i = 1; i <= N; ++i) for (int j = i + 1; j <= N; ++j) cin >> A[i][j];
+	for (int i = 1; i <= N; ++i) for (int j = i + 1; j <= N; ++j) cin >> O[i][j];
+	int MAX_V = N + 1;
+	int source = 0, sink = N;
 	vector<vector<Edge>> adj(MAX_V);
+	addEdge(source, 1, P, 0, adj);
+	for (int i = 1; i < N; ++i) addEdge(i, i + 1, 987654321, 0ll, adj);
+	for (int i = 1; i <= N; ++i) for (int j = i + 1; j <= N; ++j) addEdge(i, j, A[i][j], -C[i][j], adj);
+	ll rem = 0;
+	for (int i = 1; i <= N; ++i) for (int j = i + 1; j <= N; ++j) {
+		addEdge(i, j, O[i][j], -1e8, adj);
+		rem += 1e8 * O[i][j];
+	}
 	auto ans = networkFlow(source, sink, adj);
+	cout << -ans.second - rem << '\n';
+}
+
+int main() {
+	ios::sync_with_stdio(0); cin.tie(0);
+	int T; cin >> T;
+	while (T--) solve();
 }

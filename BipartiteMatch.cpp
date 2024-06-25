@@ -14,7 +14,7 @@ bool dfs(int a, vector<int>& aMatch, vector<int>& bMatch, vector<bool>& visited,
 	return false;
 }
 
-int bipartiteMatch(int& MAX_N, int& MAX_M, vector<vector<int>>& adj) {
+int bipartiteMatch(int MAX_N, int MAX_M, vector<vector<int>>& adj) {
 	vector<int> aMatch = vector<int>(MAX_N, -1);
 	vector<int> bMatch = vector<int>(MAX_M, -1);
 	int size = 0;
@@ -31,7 +31,6 @@ int bipartiteMatch(int& MAX_N, int& MAX_M, vector<vector<int>>& adj) {
 // time complexity: V*E
 void solve() {
 	int MAX_N, MAX_M;
-	// 0 ~ MAX_N - 1, 0 ~ MAX_M - 1
 	vector<vector<int>> adj(MAX_N);
 	int ans = bipartiteMatch(MAX_N, MAX_M, adj);
 	cout << ans;

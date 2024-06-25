@@ -67,8 +67,38 @@ void addEdge(int s, int e, ll cap, ll dis, vector<vector<Edge>>& adj) {
 
 // time complexity: (V+E)*F
 void solve() {
-	int MAX_V;
-	int source, sink;
+	int N; cin >> N;
+	ll A[N + 1], H[N + 1], L[N + 1];
+	ll maxA = 0, idx = -1;
+	for (int i = 1; i <= N; ++i) {
+		cin >> A[i];
+		if (A[i] > maxA) {
+			maxA = A[i];
+			idx = i;
+		}
+	}
+	for (int i = 1; i <= N; ++i) cin >> H[i];
+	for (int i = 1; i <= N; ++i) cin >> L[i];
+	int MAX_V = 2 * N + 2;
+	int source = 0, sink = 2 * N + 1;
 	vector<vector<Edge>> adj(MAX_V);
+	for (int i = 1; i <= N; ++i) {
+		if (i == idx) continue;
+		addEdge(source, i, 1, H[i], adj);
+	}
+	for (int i = 1; i <= N; ++i) for (int j = 1; j <= N; ++j) {
+		if (A[i] >= A[j]) continue;
+		addEdge(i, j + N, 1, -(A[i] ^ A[j]) + H[j], adj);
+	}
+	for (int i = 1; i <= N; ++i) {
+		if (i != idx) addEdge(i + N, sink, L[i] - 1, 0, adj);
+		else addEdge(i + N, sink, L[i], 0, adj);
+	}
 	auto ans = networkFlow(source, sink, adj);
+	cout << -ans.second;
+}
+
+int main() {
+	ios::sync_with_stdio(0); cin.tie(0);
+	solve();
 }

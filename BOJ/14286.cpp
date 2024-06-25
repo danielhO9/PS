@@ -67,9 +67,21 @@ void addEdge(int s, int e, ll c, vector<vector<Edge>>& adj) {
 
 // time complexity: V^2*E
 void solve() {
-	int MAX_V;
+	int n, m; cin >> n >> m;
+	int MAX_V = n + 1;
 	int source, sink;
 	vector<vector<Edge>> adj(MAX_V);
+	for (int i = 0; i < m; ++i) {
+		int a, b; ll c; cin >> a >> b >> c;
+		addEdge(a, b, c, adj);
+		addEdge(b, a, c, adj);
+	}
+	cin >> source >> sink;
 	auto ans = networkFlow(source, sink, adj);
 	cout << ans;
+}
+
+int main() {
+	ios::sync_with_stdio(0); cin.tie(0);
+	solve();
 }
