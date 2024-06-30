@@ -39,13 +39,42 @@ struct TrieNode {
 			return flag;
 		} else return false;
 	}
+	int query(const char* key, int dep) {
+		if (*key == 0) return 0;
+		char next = *key;
+		char rev = '1' + '0' - next;
+		int ret = 0;
+		if (children.find(rev) != children.end()) {
+			ret += (1 << dep);
+			// cout << dep << ' ' << rev << '\n';
+			ret += children[rev]->query(key + 1, dep - 1);
+		} else {
+			// cout << dep << ' ' << next << '\n';
+			ret += children[next]->query(key + 1, dep - 1);
+		}
+		return ret;
+	}
 };
 
 void solve() {
 	TrieNode* trie = new TrieNode();
-	// string s; cin >> s;
-	// trie->insert(s.c_str());
-	// auto res = trie->find(s.c_str());
-	// trie->remove(s.c_str());
+	int N; cin >> N;
+	int ans = 0;
+	for (int i = 0; i < N; ++i) {
+		int A; cin >> A;
+		string s;
+		for (int j = 29; j >= 0; --j) {
+			if ((A >> j) & 1) s += '1';
+			else s += '0';
+		}
+		trie->insert(s.c_str());
+		ans = max(ans, trie->query(s.c_str(), 29));
+	}
+	cout << ans;
 	delete trie;
+}
+
+int main() {
+	ios::sync_with_stdio(0); cin.tie(0);
+	solve();
 }

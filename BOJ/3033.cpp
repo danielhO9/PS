@@ -33,7 +33,7 @@ vector<int> suffixArray(const string& s) {
 	return sfx;
 }
 
-// i번째와 i - 1번째 sfx에서 lcp 길이
+// i번째와 i - 1번째 sfx에서 lcm 길이
 vector<int> commomPrefix(const string& s, const vector<int>& sfx) {
 	const int MAX_N = s.size();
 	vector<int> inv(MAX_N), lcp(MAX_N);
@@ -51,7 +51,14 @@ vector<int> commomPrefix(const string& s, const vector<int>& sfx) {
 }
 
 void solve() {
-	string S;
+	int _; cin >> _;
+	string S; cin >> S;
 	vector<int> sfx = suffixArray(S);
 	vector<int> lcp = commomPrefix(S, sfx);
+	cout << *max_element(lcp.begin(), lcp.end());
+}
+
+int main() {
+	ios::sync_with_stdio(0); cin.tie(0);
+	solve();
 }

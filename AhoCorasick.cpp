@@ -42,6 +42,7 @@ void getFailure(TrieNode* trie) {
 	}
 }
 
+// trie에 s의 부분문자열이 존재하는지 유무
 bool query(string& s, TrieNode* trie) {
 	TrieNode* p = trie;
 	for (auto& i: s) {

@@ -41,3 +41,14 @@ vector<int> kmpSearch(const string& H, const string& N) {
 	}
 	return ret;
 }
+
+void solve() {
+	string A, B; cin >> A >> B; B += B; B.pop_back();
+	vector<int> ans = kmpSearch(B, A);
+	cout << ans.size();
+}
+
+int main() {
+	ios::sync_with_stdio(0); cin.tie(0);
+	solve();
+}
