@@ -2,7 +2,7 @@
 using namespace std;
 
 const int ALPHABETS = 26;
-int toNumber(char ch) { return ch - 'a'; };
+int toNumber(char ch) { return ch - 'A'; };
 
 struct TrieNode {
 	TrieNode* children[ALPHABETS];
@@ -61,22 +61,8 @@ bool query(string& s, TrieNode* trie) {
 
 void solve() {
 	TrieNode* trie = new TrieNode();
-	int N; cin >> N;
-	for (int i = 0; i < N; ++i) {
-		string s; cin >> s;
-		trie->insert(s.c_str());
-	}
+	// trie->insert(s.c_str());
 	getFailure(trie);
-	int Q; cin >> Q;
-	while (Q--) {
-		string s; cin >> s;
-		if (query(s, trie)) cout << "YES\n";
-		else cout << "NO\n";
-	}
+	// query(s, trie);
 	delete trie;
-}
-
-int main() {
-	ios::sync_with_stdio(0); cin.tie(0);
-	solve();
 }

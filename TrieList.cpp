@@ -1,33 +1,61 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-void add(vector<vector<int>>& trie, vector<int>& final, int& treesize, const string& s) {
-    int v = 0;
-    for (auto c : s) {
-        int i = c - 'a';
-        if (trie[v][i] == -1)
-            trie[v][i] = ++treesize;
-        v = trie[v][i];
-    }
-	final[v] = true;
-}
+const int ALPHABETS = 26;
+int toNumber(char ch) { return ch - 'A'; };
 
-bool check(vector<vector<int>>& trie, vector<int>& final, const string& s) {
-    int v = 0;
-	for (auto c: s) {
-		int i = c - 'a';
-		if (trie[v][i] == -1) return false;
-		v = trie[v][i];
+struct TrieNode {
+	TrieNode* children[ALPHABETS];
+	bool terminal;
+	TrieNode(): terminal(false) {
+		memset(children, 0, sizeof(children));
 	}
-	if (final[v]) return true;
-	return false;
-}
+	~TrieNode() {
+		for (int i = 0; i < ALPHABETS; ++i) if (children[i]) delete children[i];
+	}
+	void insert(const char* key) {
+		if (*key == 0) terminal = true;
+		else {
+			int next = toNumber(*key);
+			if (children[next] == NULL) children[next] = new TrieNode();
+			children[next]->insert(key + 1);
+		}
+	}
+	bool find(const char* key) {
+		if (*key == 0) return this->terminal;
+		int next = toNumber(*key);
+		if (children[next] == NULL) return false;
+		return children[next]->find(key + 1);
+	}
+	bool remove(const char* key) {
+		bool flag = true;
+		if (*key == 0) {
+			this->terminal = false;
+			for (int i = 0; i < ALPHABETS; ++i) if (children[i]) {
+				flag = false;
+				break;
+			}
+			return flag;
+		}
+		if (this->terminal) return false;
+		int next = toNumber(*key);
+		if (children[next]->remove(key + 1)) {
+			delete children[next];
+			children[next] = NULL;
+			for (int i = 0; i < ALPHABETS; ++i) if (children[i]) {
+				flag = false;
+				break;
+			}
+			return flag;
+		} else return false;
+	}
+};
 
 void solve() {
-	int n;
-	vector<vector<int>> trie(4000001, vector<int> (26, -1));
-	vector<int> final(4000001, false);
-	int treesize = 0;
-	add(trie, final, treesize, "abc");
-	cout << check(trie, final, "abc");
+	TrieNode* trie = new TrieNode();
+	// string s; cin >> s;
+	// trie->insert(s.c_str());
+	// auto res = trie->find(s.c_str());
+	// trie->remove(s.c_str());
+	delete trie;
 }
