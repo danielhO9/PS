@@ -6,28 +6,43 @@ struct Vertex {
 	int e; ll w;
 };
 
+vector<vector<Vertex>> adj;
 vector<int> sz;
 vector<bool> vis;
 
-int getSize(vector<vector<Vertex>>& adj, int v, int p){
+int getSize(int v, int p){
     sz[v] = 1;
-    for(auto i: adj[v]) if (i.e != p && !vis[i.e]) sz[v] += getSize(adj, i.e, v);
+    for(auto i: adj[v]) if (i.e != p && !vis[i.e]) sz[v] += getSize(i.e, v);
     return sz[v];
 }
 
-int getCent(vector<vector<Vertex>>& adj, int v, int p, int& sub){
-    for(auto i: adj[v]) if (i.e != p && !vis[i.e] && sz[i.e] * 2 > sub) return getCent(adj, i.e, v, sub);
+int getCent(int v, int p, int& sub){
+    for(auto i: adj[v]) if (i.e != p && !vis[i.e] && sz[i.e] * 2 > sub) return getCent(i.e, v, sub);
     return v;
 }
 
-int centroid(vector<vector<Vertex>>& adj, int v, int p) {
-    getSize(adj, v, p); int sub = sz[v]; 
-	return getCent(adj, v, p, sub);
+int centroid(int v, int p) {
+    getSize(v, p); int sub = sz[v]; 
+	return getCent(v, p, sub);
+}
+
+ll dnc(int v) {
+    getSize(v, -1); int csz = sz[v];
+	int cent = getCent(v, -1, csz); vis[cent] = true;
+
+	ll ret = 0;
+	// compute
+
+    for (auto i: adj[cent]) if (!vis[i.e]) ret += dnc(i.e);
+	return ret;
 }
 
 void solve() {
 	int MAX_N;
-	vector<vector<Vertex>> adj(MAX_N);
-	sz.resize(MAX_N); vis = vector<bool>(MAX_N, false);
-	centroid(adj, 0, -1);
+	adj.resize(MAX_N);
+	sz.resize(MAX_N);
+	vis = vector<bool>(MAX_N, false);
+
+	int src = 1;
+	dnc(src);
 }
