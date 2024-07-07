@@ -47,3 +47,27 @@ vector<ll> multiply(vector<ll>& A, vector<ll>& B) {
 	while (ret.back() == 0) ret.pop_back();
     return ret;
 }
+
+void solve() {
+	vector<ll> arr(500000);
+	for (int i = 1; i <= 5e5; ++i) {
+		for (int j = i; j <= 5e5; j += i) ++arr[j];
+	}
+	vector<ll> mul = multiply(arr, arr);
+	int n; cin >> n;
+	for (int i = 0; i < n; ++i) {
+		int idx = 0; ll val = 0;
+		int a, b; cin >> a >> b;
+		for (int j = a; j <= b; ++j) {
+			if (val < mul[j]) {
+				idx = j; val = mul[j];
+			}
+		}
+		cout << idx << ' ' << val << '\n';
+	}
+}
+
+int main() {
+	ios::sync_with_stdio(0); cin.tie(0);
+	solve();
+}
