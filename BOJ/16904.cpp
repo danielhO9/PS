@@ -2,19 +2,19 @@
 using namespace std;
 typedef long long ll;
 
-struct num {
-	int x, l, r;
-};
-
 int N;
+int idx = 0;
 unordered_map<int, int> m;
-vector<vector<num>> tree;
+vector<vector<int>> tree;
+
 int l[500000];
 int r[500000];
 int x[500000];
 
-template<size_t n>
-void rref(vector<bitset<n>>& A) {
+void rref(vector<int>& a) {
+	const int n = 31;
+	vector<bitset<n>> A;
+	for (auto i: a) A.push_back(bitset<n>(i));
     int m = (int)A.size();
     for (int j = n - 1, r = 0; j >= 0 && r < m; --j) {
         for (int i = r; i < m; i++) {
@@ -32,11 +32,44 @@ void rref(vector<bitset<n>>& A) {
             ++r;
         }
     }
+	a.clear();
+	for (auto i: A) {
+		int tmp = i.to_ulong();
+		if (tmp == 0) break;
+		a.push_back(tmp);
+	}
+}
+
+void update(int node, int start, int end, int idx) {
+    if (l[idx] > end || r[idx] < start) return;
+    if (l[idx] <= start && end <= r[idx]) {
+        tree[node].push_back(x[idx]);
+        return;
+    }
+	int mid = (start + end) / 2;
+    update(node * 2, start, mid, idx);
+    update(node * 2 + 1, mid + 1, end, idx);
+}
+
+void dnq(int node, int start, int end) {
+	rref(tree[node]);
+	if (start == end) {
+		int ans = 0;
+		for (auto i: tree[node]) ans ^= i;
+		cout << ans << '\n';
+	} else {
+		for (auto i: tree[node]) {
+			tree[node * 2].push_back(i);
+			tree[node * 2 + 1].push_back(i);
+		}
+		int mid = (start + end) / 2;
+		dnq(node * 2, start, mid);
+		dnq(node * 2 + 1, mid + 1, end);
+	}
 }
 
 void solve() {
 	cin >> N;
-	int idx = 0;
 	for (int i = 0; i < N; ++i) {
 		string s; cin >> s;
 		if (s[0] == '-') {
@@ -51,7 +84,13 @@ void solve() {
 			++idx;
 		}
 	}
-	
+	int h = (int)ceil(log2(N));
+	int tree_size = (1 << (h + 1));
+	tree = vector<vector<int>> (tree_size);
+	for (int i = 0; i < idx; ++i) {
+		update(1, 0, N - 1, i);
+	}
+	dnq(1, 0, N - 1);
 }
 
 int main() {

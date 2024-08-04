@@ -32,12 +32,12 @@ int main() {
 		A[i] = bitset<60>(tmp);
 	}
 	rref(A);
-	for (int i = 0; i < n; ++i) {
-		for (int j = 3; j >= 0; --j) {
-			cout << A[i][j] << ' ';
-		}
-		cout << '\n';
-	}
+	// for (int i = 0; i < n; ++i) {
+	// 	for (int j = 3; j >= 0; --j) {
+	// 		cout << A[i][j] << ' ';
+	// 	}
+	// 	cout << '\n';
+	// }
 	ll ans = 0ll;
 	for (int i = 0; i < n; ++i) {
 		ans ^= A[i].to_ulong();
