@@ -98,45 +98,21 @@ public:
 template<class T>
 void rref(matrix<T>& A) {
     for (int j = 0, r = 0; j < A.m && r < A.n; j++) {
-		// for (int i = 0; i < A.n; ++i) {
-		// 	for (int j = 0; j < A.m; ++j) {
-		// 		cout << A[{i, j}].a << '/' << A[{i, j}].b << ' ';
-		// 	}
-		// 	cout << '\n';
-		// }
-		// cout << '\n';
         for (int i = r; i < A.n; i++) {
             if (A[{i, j}] != 0) {
                 A.rswap(r, i);
                 break;
             }
         }
-		// cout << "swap\n";
-		// for (int i = 0; i < A.n; ++i) {
-		// 	for (int j = 0; j < A.m; ++j) {
-		// 		cout << A[{i, j}].a << '/' << A[{i, j}].b << ' ';
-		// 	}
-		// 	cout << '\n';
-		// }
-		// cout << '\n';
-		// cout << "ero\n";
         if (A[{r, j}] != 0) {
             A.rmul(r, inv(A[{r, j}]));
             for (int i = 0; i < A.n; i++) {
                 if (i != r) {
-					// cout << (-A[{i, j}]).a << '/' << (-A[{i, j}]).b << '\n';
                     A.radd(i, r, -A[{i, j}]);
                 }
             }
             r++;
         }
-		// for (int i = 0; i < A.n; ++i) {
-		// 	for (int j = 0; j < A.m; ++j) {
-		// 		cout << A[{i, j}].a << '/' << A[{i, j}].b << ' ';
-		// 	}
-		// 	cout << '\n';
-		// }
-		// cout << '\n';
     }
 }
 

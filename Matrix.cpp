@@ -1,25 +1,23 @@
 #include <bits/stdc++.h>
 using namespace std;
+typedef long long ll;
 
 template<class T>
 class Matrix {
 public:
     int m, n;
+	vector<int> cidx;
     vector<vector<T>> entry;
-    Matrix(int m_, int n_) : m(m_), n(n_), entry(m_, vector<T>(n_)) {}
+    Matrix(int m_, int n_) : m(m_), n(n_), cidx(n_), entry(m_, vector<T>(n_)) {
+		iota(cidx.begin(), cidx.end(), 0);
+	}
     Matrix(int m_) : Matrix(m_, m_) {}
 
-    T& operator[](const pair<int, int>& p) {
-        return entry[p.first][p.second];
-    }
+    T& operator[](const pair<int, int>& p) { return entry[p.first][cidx[p.second]]; }
 
-    const T& operator[](const pair<int, int>& p) const {
-        return entry[p.first][p.second];
-    }
+    const T& operator[](const pair<int, int>& p) const { return entry[p.first][cidx[p.second]]; }
 
-    void rswap(int i, int j) {
-        swap(entry[i], entry[j]);
-    }
+    void rswap(int i, int j) { swap(entry[i], entry[j]); }
 
     void rmul(int i, T x) {
         for (int j = 0; j < n; ++j) {
@@ -32,10 +30,65 @@ public:
             entry[i1][j] += entry[i2][j] * x;
         }
     }
+
+	void cswap(int i, int j) { swap(cidx[i], cidx[j]); };
+
+	void cmul(int j, T x) {
+		for (int i = 0; i < n; ++i) {
+			entry[i][cidx[j]] *= x;
+		}
+	}
+
+	void cadd(int j1, int j2, T x) {
+		for (int i = 0; i < n; ++i) {
+			entry[i][cidx[j1]] += entry[i][cidx[j2]] * x;
+		}
+	}
 };
 
 template<class T>
-void gaussian_elimination(Matrix<T>& A) {
+vector<T> char_poly(Matrix<T>& A) {
+	int n = A.n;
+	assert(n == A.n);
+	for (int j = 0; j < n - 2; ++j) {
+		for (int i = j + 1; i < n; ++i) {
+			if (A[{i, j}] != 0) {
+				A.rswap(i, j + 1);
+				A.cswap(i, j + 1);
+				break;
+			}
+		}
+		if (A[{j + 1, j}] != 0) {
+			for (int i = j + 2; i < n; ++i) {
+				T x = -A[{i, j}] / A[{j + 1, j}];
+				A.radd(i, j + 1, x);
+				A.cadd(j + 1, i, -x);
+			}
+		}
+	}
+	vector<vector<T>> cache(n + 1);
+	cache[0] = {1};
+	for (int k = 1; k <= n; ++k) {
+		cache[k].resize(k + 1);
+		for (int i = 1; i <= k; ++i) {
+			cache[k][i] = cache[k - 1][i - 1];
+		}
+		for (int i = 0; i < k; ++i) {
+			cache[k][i] -= A[{k - 1, k - 1}] * cache[k - 1][i];
+		}
+		T prod = 1;
+		for (int i = k - 2; i >= 0; --i) {
+			prod *= A[{i + 1, i}];
+			for (int j = 0; j <= i; ++j) {
+				cache[k][j] -= A[{i, k - 1}] * prod * cache[i][j];
+			}
+		}
+	}
+	return cache[n];
+}
+
+template<class T>
+void gauss_elim(Matrix<T>& A) {
     for (int j = 0, r = 0; j < A.n && r < A.m; ++j) {
         for (int i = r; i < A.m; ++i) {
             if (A[{i, j}] != 0) {
@@ -47,27 +100,6 @@ void gaussian_elimination(Matrix<T>& A) {
             A.rmul(r, 1 / A[{r, j}]);
             for (int i = r + 1; i < A.m; ++i) {
                 A.radd(i, r, -A[{i, j}]);
-            }
-            ++r;
-        }
-    }
-}
-
-template<size_t n>
-void rref(vector<bitset<n>>& A) {
-    int m = (int)A.size();
-    for (int j = n - 1, r = 0; j >= 0 && r < m; --j) {
-        for (int i = r; i < m; i++) {
-            if (A[i][j]) {
-                swap(A[r], A[i]);
-                break;
-            }
-        }
-        if (A[r][j]) {
-            for (int i = 0; i < m; i++) if (i != r) {
-                if (A[i][j]) {
-                    A[i] ^= A[r];
-                }
             }
             ++r;
         }
@@ -97,10 +129,11 @@ void rref(Matrix<T>& A) {
 
 template<class T>
 T det(Matrix<T>& A) {
+	int n = A.n;
     assert(A.n == A.m);
     T ret = 1;
-    for (int j = 0; j < A.n; ++j) {
-        for (int i = j; i < A.n; ++i) {
+    for (int j = 0; j < n; ++j) {
+        for (int i = j; i < n; ++i) {
             if (A[{i, j}] != 0) {
                 if (i > j) {
                     A.rswap(j, i);
@@ -114,7 +147,7 @@ T det(Matrix<T>& A) {
         }
         ret *= A[{j, j}];
         A.rmul(j, 1 / A[{j, j}]);
-        for (int i = j + 1; i < A.n; ++i) {
+        for (int i = j + 1; i < n; ++i) {
             A.radd(i, j, -A[{i, j}]);
         }
     }
@@ -137,22 +170,22 @@ Matrix<T> operator * (const Matrix<T>& A, const Matrix<T>& B) {
 }
 
 template<class T>
-vector<T> solve_linear_equation(const Matrix<T>& A, const vector<T>& b) {
-    int m = A.m;
-    assert(m == A.n);
-    assert(m == (int)b.size());
-    matrix<T> B(m);
-    for (int i = 0; i < m; ++i) {
-        for (int j = 0; j < m; ++j) {
+vector<T> sol_lin_equ(const Matrix<T>& A, const vector<T>& b) {
+    int n = A.n;
+    assert(n == A.m);
+    assert(n == (int)b.size());
+    matrix<T> B(n, n + 1);
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
             B[{i, j}] = A[{i, j}];
         }
-        B[{i, m}] = b[i];
+        B[{i, n}] = b[i];
     }
     rref(B);
-    vector<T> x(m);
-    for (int i = 0; i < m; ++i) {
+    vector<T> x(n);
+    for (int i = 0; i < n; ++i) {
         assert((B[{i, i}] == 1));
-        x[i] = B[{i, m}];
+        x[i] = B[{i, n}];
     }
     return x;
 }
@@ -177,4 +210,27 @@ Matrix<T> inv(const Matrix<T>& A) {
         }
     }
     return X;
+}
+
+const int sz = 60;
+void rref(vector<ll>& A) {
+	if (A.empty()) return;
+    int m = A.size();
+    for (int j = sz - 1, r = 0; j >= 0 && r < m; --j) {
+        for (int i = r; i < m; i++) {
+            if ((A[i] >> j) & 1) {
+                swap(A[r], A[i]);
+                break;
+            }
+        }
+        if ((A[r] >> j) & 1) {
+            for (int i = 0; i < m; i++) if (i != r) {
+                if ((A[i] >> j) & 1) {
+                    A[i] ^= A[r];
+                }
+            }
+            ++r;
+        }
+    }
+	while (A.back() == 0ll) A.pop_back();
 }
