@@ -1,6 +1,5 @@
 #include <bits/stdc++.h>
 using namespace std;
-
 typedef long long ll;
 
 // it returns {g, {x,y}}, ax+by=g
