@@ -8,17 +8,20 @@ int num[200001];
 bool vis[100001];
 int idx;
 vector<tuple<int, int, int>> ans;
+map<pair<int, int>, bool> m;
 
 void dfs(int v, int p) {
-    for (int u: adj[v]) if (u != p) {
+    for (int u: adj[v]) if (m[{u, v}] == 0) {
+        m[{u, v}] = 1;
+        m[{v, u}] = 1;
         if (vis[u]) {
-			cout << idx << ' ' << v << '\n';
+			// cout << idx << ' ' << v << '\n';
             num[idx] = u;
             nadj[idx].push_back(v);
             nadj[v].push_back(idx);
             ++idx;
         } else {
-			cout << u << ' ' << v << '\n';
+			// cout << u << ' ' << v << '\n';
 			nadj[u].push_back(v);
 			nadj[v].push_back(u);
 			vis[u] = true;
@@ -52,11 +55,15 @@ void solve() {
         adj[u].push_back(v);
         adj[v].push_back(u);
     }
-    vis[1] = true; dfs(1, 0);
-    // getAns(1, 0);
-    // for (auto i: ans) {
-    //     cout << get<0>(i) << ' ' << get<1>(i) << ' ' << get<2>(i) << '\n';
-    // }
+    for (int i = 1; i <= N; ++i) num[i] = i;
+    for (int i = 1; i <= N; ++i) if (!vis[i]) {
+        vis[i] = true; dfs(i, 0);
+        getAns(i, 0);
+    }
+    cout << ans.size() << '\n';
+    for (auto i: ans) {
+        cout << num[get<0>(i)] << ' ' << num[get<1>(i)] << ' ' << num[get<2>(i)] << '\n';
+    }
 }
 
 int main() {
