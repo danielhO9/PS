@@ -1,23 +1,33 @@
 #include <bits/stdc++.h>
 using namespace std;
-typedef unsigned long ll;
+typedef unsigned long ull;
 
-ll pow(ll a, ll b, ll MOD) {
+const vector<vector<ull>> alist = {
+	{2, 7, 61},
+	{2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37}
+};
+
+ull pow(ull a, ull b, ull MOD) {
 	a %= MOD;
 	if (b == 0) return 1;
-	ll half = pow(a, b / 2, MOD);
+	ull half = pow(a, b / 2, MOD);
 	half = (half * half) % MOD;
 	if (b % 2 == 0) return half;
 	else return (half * a) % MOD;
 }
 
-bool millerRabin(ll n) {
-	const ll a[3] = {2, 7, 61};
-	for (int i = 0; i < 3; ++i) {
-		if (a[i] == n) return true;
-		ll k = n - 1;
+// int -> type 0
+// ull -> type 1
+bool miullerRabin(ull n, int t) {
+	if (t == 1 && n < 40) {
+		for (auto i: alist[t]) if (i == n) return true;
+		return false;
+	}
+	for (int i = 0; i < alist[t].size(); ++i) {
+		if (alist[t][i] == n) return true;
+		ull k = n - 1;
 		while (true) {
-			ll temp = pow(a[i], k, n);
+			ull temp = pow(alist[t][i], k, n);
 			if (temp == n - 1) break;
 			if (k % 2 == 1) {
 				if (temp == 1) break;
@@ -30,10 +40,11 @@ bool millerRabin(ll n) {
 }
 
 void solve() {
-	int N; cin >> N; int cnt = 0;
-	for (int i = 0; i < N; ++i) {
-		ll n; cin >> n;
-		if (millerRabin(2 * n + 1)) ++cnt;
+	int N; cin >> N;
+	int cnt = 0;
+	while (N--) {
+		long long k; cin >> k;
+		if (miullerRabin(2 * k + 1, 0)) ++cnt;
 	}
 	cout << cnt;
 }

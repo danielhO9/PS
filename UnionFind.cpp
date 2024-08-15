@@ -1,20 +1,20 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int find(vector<int>& parents, int x) {
-	if (parents[x] == x) return x;
-	parents[x] = find(parents, parents[x]);
-	return parents[x];
+const int MAX_N = 100001;
+int par[MAX_N];
+
+int find(int x) {
+	if (par[x] == x) return x;
+	par[x] = find(par[x]);
+	return par[x];
 }
 
-void Union(vector<int>& parents, int x, int y) {
-	x = find(parents, x); y = find(parents, y);
-	int minn = min(x, y);
-	parents[x] = minn; parents[y] = minn;
+void union_path(int x, int y) {
+	x = find(x); y = find(y);
+	par[x] = y;
 }
 
 void solve() {
-	int MAX_N;
-	vector<int> parents(MAX_N);
-	for (int i = 0; i < MAX_N; ++i) parents[i] = i;
+	for (int i = 0; i < MAX_N; ++i) par[i] = i;
 }

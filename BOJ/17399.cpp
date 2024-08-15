@@ -2,7 +2,7 @@
 using namespace std;
 typedef long long ll;
 
-const int MAX_V = 40001;
+const int MAX_V = 100001;
 vector<pair<int, ll>> adj[MAX_V];
 int dep[MAX_V];
 ll dis[MAX_V];
@@ -53,20 +53,40 @@ ll getDis(int u, int v) {
 	return dis[u] + dis[v] - dis[l] * 2;
 }
 
+void query() {
+	const int h = f.size();
+	vector<int> v(3); for (int i = 0; i < 3; ++i) cin >> v[i];
+	for (int i = 0; i < 3; ++i) {
+		int j = (i + 1) % 3;
+		int a = v[i], b = v[j], c = v[(i + 2) % 3];
+		int d = getDis(a, b);
+		if (d % 2) continue;
+		if (dep[a] < dep[b]) swap(a, b);
+		int dif = d / 2;
+		for (int k = 0; k < h; ++k) if ((dif >> k) & 1) {
+			a = f[k][a];
+		}
+		if (getDis(a, c) == dif) {
+			cout << a << '\n';
+			return;
+		}
+	}
+	cout << -1 << '\n';
+}
+
 void solve() {
 	int N; cin >> N;
 	for (int i = 0; i < N - 1; ++i) {
-		int u, v; ll d; cin >> u >> v >> d;
-		adj[u].push_back({v, d});
-		adj[v].push_back({u, d});
+		int X, Y; cin >> X >> Y;
+		adj[X].push_back({Y, 1});
+		adj[Y].push_back({X, 1});
 	}
 	int h = (int)ceil(log2(MAX_V)); ++h;
 	f = vector<vector<int>>(h, vector<int>(MAX_V));
 	init();
-	int M; cin >> M;
-	while (M--) {
-		int u, v; cin >> u >> v;
-		cout << getDis(u, v) << '\n';
+	int Q; cin >> Q;
+	while (Q--) {
+		query();
 	}
 }
 

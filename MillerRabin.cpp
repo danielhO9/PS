@@ -1,37 +1,36 @@
 #include <bits/stdc++.h>
 using namespace std;
-typedef unsigned long ll;
+typedef unsigned long ull;
 
-const vector<vector<ll>> a = {
+const vector<vector<ull>> alist = {
 	{2, 7, 61},
 	{2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37}
 };
 
-ll pow(ll a, ll b, ll MOD) {
+ull pow(ull a, ull b, ull MOD) {
 	a %= MOD;
 	if (b == 0) return 1;
-	ll half = pow(a, b / 2, MOD);
+	ull half = pow(a, b / 2, MOD);
 	half = (half * half) % MOD;
 	if (b % 2 == 0) return half;
 	else return (half * a) % MOD;
 }
 
-bool millerRabin(ll n) {
-	// int -> type 0
-	// ll -> type 1
-	int type = 1;
-	if (type == 1 && n < 40) {
-		for (auto i: a[type]) if (i == n) return true;
+// int -> type 0
+// ull -> type 1
+bool miullerRabin(ull n, int t) {
+	if (t == 1 && n < 40) {
+		for (auto i: alist[t]) if (i == n) return true;
 		return false;
 	}
-	for (int i = 0; i < a[type].size(); ++i) {
-		if (a[type][i] == n) return true;
-		ll k = n - 1;
+	for (int i = 0; i < alist[t].size(); ++i) {
+		if (alist[t][i] == n) return true;
+		ull k = n - 1;
 		while (true) {
-			ll temp = pow(a[type][i], k, n);
-			if (temp == n - 1) break;
+			ull tmp = pow(alist[t][i], k, n);
+			if (tmp == n - 1) break;
 			if (k % 2 == 1) {
-				if (temp == 1) break;
+				if (tmp == 1) break;
 				else return false;
 			}
 			k /= 2;
