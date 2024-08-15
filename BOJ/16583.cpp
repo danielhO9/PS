@@ -6,23 +6,24 @@ vector<int> adj[100001];
 vector<int> nadj[200001];
 int num[200001];
 bool vis[100001];
-int idx = N + 1;
+int idx;
 vector<tuple<int, int, int>> ans;
 
 void dfs(int v, int p) {
     for (int u: adj[v]) if (u != p) {
-        cout << u << ' ' << v << '\n';
         if (vis[u]) {
+			cout << idx << ' ' << v << '\n';
             num[idx] = u;
             nadj[idx].push_back(v);
-            nadj[idx].push_back(idx);
+            nadj[v].push_back(idx);
             ++idx;
-            continue;
-        }
-        nadj[u].push_back(v);
-        nadj[v].push_back(u);
-        vis[u] = true;
-        dfs(u, v);
+        } else {
+			cout << u << ' ' << v << '\n';
+			nadj[u].push_back(v);
+			nadj[v].push_back(u);
+			vis[u] = true;
+			dfs(u, v);
+		}
     }
 }
 
@@ -30,7 +31,7 @@ int getAns(int v, int p) {
     vector<int> c;
     for (auto u: nadj[v]) if (u != p) {
         int tmp = getAns(u, v);
-        if (tmp) {
+        if (tmp != 0) {
             ans.push_back(make_tuple(tmp, u, v));
         } else {
             c.push_back(u);
@@ -45,16 +46,17 @@ int getAns(int v, int p) {
 
 void solve() {
     cin >> N >> M;
+	idx = N + 1;
     for (int i = 0; i < M; ++i) {
         int u, v; cin >> u >> v;
         adj[u].push_back(v);
         adj[v].push_back(u);
     }
     vis[1] = true; dfs(1, 0);
-    getAns(1, 0);
-    for (auto i: ans) {
-        cout << get<0>(i) << ' ' << get<1>(i) << ' ' << get<2>(i) << '\n';
-    }
+    // getAns(1, 0);
+    // for (auto i: ans) {
+    //     cout << get<0>(i) << ' ' << get<1>(i) << ' ' << get<2>(i) << '\n';
+    // }
 }
 
 int main() {
