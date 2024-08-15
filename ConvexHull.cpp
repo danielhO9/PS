@@ -3,6 +3,7 @@ using namespace std;
 typedef long long ll;
 
 ll cross(const pair<ll, ll>& a, const pair<ll, ll>& b) { return a.first * b.second - a.second * b.first; }
+
 ll ccw(const pair<ll, ll>& a, const pair<ll, ll>& b, const pair<ll, ll>& c) {
 	pair<ll, ll> a_b = {b.first - a.first, b.second - a.second};
 	pair<ll, ll> b_c = {c.first - b.first, c.second - b.second};
