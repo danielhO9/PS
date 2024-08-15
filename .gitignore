@@ -3,8 +3,9 @@
 
 # Unignore all with extensions
 !*.*
-*.bin
+*.bins
 *.prob
+*.exe
 
 # Unignore all dirs
 !*/
