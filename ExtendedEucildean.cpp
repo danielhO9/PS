@@ -2,6 +2,7 @@
 using namespace std;
 typedef long long ll;
 
+// https://casterian.net
 // returns {gcd, x, y}
 tuple<ll, ll, ll> extended_euclidean(ll a, ll b) {
     if (b == 0)
@@ -9,5 +10,3 @@ tuple<ll, ll, ll> extended_euclidean(ll a, ll b) {
     auto [g, x, y] = extended_euclidean(b, a%b);
     return {g, y, x-(a/b)*y};
 }
-
-// https://casterian.net

@@ -41,3 +41,5 @@ void solve() {
 
     cout << dp_before[MAX_N - 1];
 }
+
+// https://cp-algorithms.com/dynamic_programming/divide-and-conquer-dp.html
