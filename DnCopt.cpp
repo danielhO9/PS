@@ -27,6 +27,7 @@ void compute(int l, int r, int optl, int optr) {
     compute(mid + 1, r, opt, optr);
 }
 
+// https://cp-algorithms.com/dynamic_programming/divide-and-conquer-dp.html
 void solve() {
     dp_before.assign(MAX_N,0);
     dp_cur.assign(MAX_N,0);
@@ -41,5 +42,3 @@ void solve() {
 
     cout << dp_before[MAX_N - 1];
 }
-
-// https://cp-algorithms.com/dynamic_programming/divide-and-conquer-dp.html
