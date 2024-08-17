@@ -2,43 +2,55 @@
 using namespace std;
 typedef long long ll;
 
-void init(vector<ll>& a, vector<ll>& tree, int node, int start, int end) {
-	if (start == end) tree[node] = a[start];
-	else {
-		init(a, tree, node * 2, start, (start + end) / 2);
-		init(a, tree, node * 2 + 1, (start + end) / 2 + 1, end);
+struct SegmentTree {
+	vector<ll> arr;
+	vector<ll> tree;
+	int sz;
+
+	void init(vector<ll>& a, int sz_) {
+		sz = sz_;
+		arr = a;
+		int h = (int)ceil(log2(sz));
+		int tree_size = (1 << (h + 1));
+		tree = vector<ll>(tree_size);
+		init_(1, 0, sz - 1);
+	}
+	void init_(int node, int start, int end) {
+		if (start == end) tree[node] = arr[start];
+		else {
+			init_(node * 2, start, (start + end) / 2);
+			init_(node * 2 + 1, (start + end) / 2 + 1, end);
+			tree[node] = tree[node * 2] + tree[node * 2 + 1];
+		}
+	}
+	void update(int node, int start, int end, int index, ll val) {
+		if (index < start || index > end) return;
+		if (start == end) {
+			arr[index] = val;
+			tree[node] = val;
+			return;
+		}
+		update(node * 2, start, (start + end) / 2, index, val);
+		update(node * 2 + 1, (start + end) / 2 + 1, end, index, val);
 		tree[node] = tree[node * 2] + tree[node * 2 + 1];
 	}
-}
-
-void update(vector<ll>& a, vector<ll>& tree, int node, int start, int end, int index, ll val) {
-	if (index < start || index > end) return;
-	if (start == end) {
-		a[index] = val;
-		tree[node] = val;
-		return;
+	void update(int index, ll val) {
+		update(1, 0, sz - 1, index, val);
 	}
-	update(a, tree, node * 2, start, (start + end) / 2, index, val);
-	update(a, tree, node * 2 + 1, (start + end) / 2 + 1, end, index, val);
-	tree[node] = tree[node * 2] + tree[node * 2 + 1];
-}
-
-ll query(vector<ll>& tree, int node, int start, int end, int left, int right) {
-	if (left > end || right < start) return 0;
-	if (left <= start && end <= right) return tree[node];
-	ll lsum = query(tree, node * 2, start, (start + end) / 2, left, right);
-	ll rsum = query(tree, node * 2 + 1, (start + end) / 2 + 1, end, left, right);
-	return lsum + rsum;
-}
+	ll query(int node, int start, int end, int left, int right) {
+		if (left > end || right < start) return 0;
+		if (left <= start && end <= right) return tree[node];
+		ll lsum = query(node * 2, start, (start + end) / 2, left, right);
+		ll rsum = query(node * 2 + 1, (start + end) / 2 + 1, end, left, right);
+		return lsum + rsum;
+	}
+	ll query(int left, int right) {
+		return query(1, 0, sz - 1, left, right);
+	}
+} seg;
 
 void solve() {
-	// 0 ~ MAX_N - 1
-	int MAX_N;
-	vector<ll> arr(MAX_N);
-	int h = (int)ceil(log2(MAX_N));
-	int tree_size = (1 << (h + 1));
-	vector<ll> tree(tree_size);
-	// init(arr, tree, 1, 0, MAX_N - 1);
-	// update(arr, tree, 1, 0, MAX_N - 1, cur, 30);
-	// query(tree, 1, 0, MAX_N - 1, 0, cur);
+	int N;
+	vector<ll> arr(N);
+	seg.init(arr, N);
 }

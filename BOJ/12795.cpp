@@ -32,3 +32,22 @@ struct LineContainer : multiset<Line, less<>> {
 		return l.k * x + l.m;
 	}
 } cht;
+
+void solve() {
+	int Q; cin >> Q;
+	while (Q--) {
+		int t; cin >> t;
+		if (t == 1) {
+			ll a, b; cin >> a >> b;
+			cht.add(a, b);
+		} else {
+			ll x; cin >> x;
+			cout << cht.query(x) << "\n";
+		}
+	}
+}
+
+int main() {
+	ios::sync_with_stdio(0); cin.tie(0);
+	solve();
+}
