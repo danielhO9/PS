@@ -8,37 +8,28 @@ public:
     int m, n;
 	vector<int> cidx;
     vector<vector<T>> entry;
-    Matrix(int m_, int n_) : m(m_), n(n_), cidx(n_), entry(m_, vector<T>(n_)) {
-		iota(cidx.begin(), cidx.end(), 0);
-	}
+    Matrix(int m_, int n_) : m(m_), n(n_), cidx(n_), entry(m_, vector<T>(n_)) { iota(cidx.begin(), cidx.end(), 0); }
     Matrix(int m_) : Matrix(m_, m_) {}
-
     T& operator[](const pair<int, int>& p) { return entry[p.first][cidx[p.second]]; }
-
     const T& operator[](const pair<int, int>& p) const { return entry[p.first][cidx[p.second]]; }
 
     void rswap(int i, int j) { swap(entry[i], entry[j]); }
-
     void rmul(int i, T x) {
         for (int j = 0; j < n; ++j) {
             entry[i][j] *= x;
         }
     }
-
     void radd(int i1, int i2, T x) {
         for (int j = 0; j < n; ++j) {
             entry[i1][j] += entry[i2][j] * x;
         }
     }
-
 	void cswap(int i, int j) { swap(cidx[i], cidx[j]); };
-
 	void cmul(int j, T x) {
 		for (int i = 0; i < n; ++i) {
 			entry[i][cidx[j]] *= x;
 		}
 	}
-
 	void cadd(int j1, int j2, T x) {
 		for (int i = 0; i < n; ++i) {
 			entry[i][cidx[j1]] += entry[i][cidx[j2]] * x;
