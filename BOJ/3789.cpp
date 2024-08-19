@@ -38,16 +38,48 @@ vector<int> getSuffixArray(string& s) {
 	return sfx;
 }
 
-void solve() {
-	string S; cin >> S;
-	vector<int> sfx = getSuffixArray(S);
-	for (int i = 0; i < S.size(); ++i) {
-		for (int j = sfx[i]; j < S.size(); ++j) cout << S[j];
-		cout << '\n';
+vector<int> getLcp(const string& s, const vector<int>& sfx) {
+	const int n = s.size();
+	vector<int> inv(n), lcp(n);
+	for (int i = 0; i < n; ++i) inv[sfx[i]] = i;
+	int h = 0;
+	for(int i = 0; i < n; ++i){
+		if(inv[i]){
+			int prv = sfx[inv[i] - 1];
+			while(s[prv + h] == s[i + h]) ++h;
+			lcp[inv[i]] = h;
+		}
+		h = max(h - 1, 0);
 	}
+	return lcp;
+}
+
+void solve() {
+    int n; cin >> n;
+	string T; cin >> T;
+    T += T;
+    auto sfx = getSuffixArray(T);
+    auto lcp = getLcp(T, sfx);
+    // for (auto i: sfx) cout << i << ' ';
+    // cout << '\n';
+    // for (auto i: lcp) cout << i << ' ';
+    for (int i = 0; i < 2 * n; ++i) {
+        if (sfx[i] < n) {
+            vector<int> v; v.push_back(sfx[i]);
+            while (true) {
+                ++i;
+                if (i >= 2 * n || lcp[i] < n) break;
+                v.push_back(sfx[i]);
+            }
+            cout << *min_element(v.begin(), v.end()) << '\n';
+            return;
+        }
+    }
+
 }
 
 int main() {
-	ios::sync_with_stdio(0); cin.tie(0);
-	solve();
+    ios::sync_with_stdio(0); cin.tie(0);
+    int t; cin >> t;
+    while (t--) solve();
 }

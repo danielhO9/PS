@@ -39,15 +39,35 @@ vector<int> getSuffixArray(string& s) {
 }
 
 void solve() {
-	string S; cin >> S;
-	vector<int> sfx = getSuffixArray(S);
-	for (int i = 0; i < S.size(); ++i) {
-		for (int j = sfx[i]; j < S.size(); ++j) cout << S[j];
-		cout << '\n';
-	}
+	string s; cin >> s;
+    int n = s.size();
+
+	vector<int> sfx = getSuffixArray(s);
+    vector<int> inv(n + 1);
+    for (int i = 0; i < n; ++i) inv[sfx[i]] = i;
+    inv[n] = -1;
+    string S = s;
+    S[0] = 'a';
+    char now = 'a';
+    for (int i = 0; i + 1 < n; ++i) {
+        if (inv[sfx[i] + 1] < inv[sfx[i + 1] + 1]) S[sfx[i + 1]] = now;
+        else {
+            if (now == 'z') {
+                cout << 0;
+                return;
+            }
+            S[sfx[i + 1]] = ++now;
+        }
+    }
+    for (int i = 0; i < n; ++i) {
+        if (s[i] != S[i]) {
+            cout << 1; return;
+        }
+    }
+    cout << 0;
 }
 
 int main() {
-	ios::sync_with_stdio(0); cin.tie(0);
-	solve();
+    ios::sync_with_stdio(0); cin.tie(0);
+    solve();
 }

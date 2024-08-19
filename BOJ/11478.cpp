@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
+typedef long long ll;
 
 // 접미사 배열의 정렬
 // https://gist.github.com/koosaga/44532e5dec947132ee55da0458255e05
@@ -38,13 +39,31 @@ vector<int> getSuffixArray(string& s) {
 	return sfx;
 }
 
-void solve() {
-	string S; cin >> S;
-	vector<int> sfx = getSuffixArray(S);
-	for (int i = 0; i < S.size(); ++i) {
-		for (int j = sfx[i]; j < S.size(); ++j) cout << S[j];
-		cout << '\n';
+vector<int> getLcp(const string& s, const vector<int>& sfx) {
+	const int n = s.size();
+	vector<int> inv(n), lcp(n);
+	for (int i = 0; i < n; ++i) inv[sfx[i]] = i;
+	int h = 0;
+	for(int i = 0; i < n; ++i){
+		if(inv[i]){
+			int prv = sfx[inv[i] - 1];
+			while(s[prv + h] == s[i + h]) ++h;
+			lcp[inv[i]] = h;
+		}
+		h = max(h - 1, 0);
 	}
+	return lcp;
+}
+
+void solve() {
+	string L; cin >> L;
+	ll ans = 0;
+	vector<int> sfx = getSuffixArray(L);
+	vector<int> lcp = getLcp(L, sfx);
+	for (int i = 0; i < L.size(); ++i) {
+		ans += (int) L.size() - sfx[i] - lcp[i];
+	}
+	cout << ans;
 }
 
 int main() {
