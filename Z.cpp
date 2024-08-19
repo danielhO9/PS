@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// S[i...], S의 lcp 길이
+// S[i...], S의 lcp
 vector<int> getZ(const string& s) {
 	const int n = s.size();
 	int l = 0, r = 0;

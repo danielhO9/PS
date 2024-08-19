@@ -13,9 +13,9 @@ void manacher(const string& s, vector<int>& A) {
 	}
 }
 
-// #a#b#c#d#e
 // 각 지점을 중심으로 하는 반지름의 최댓값 = palindrome 길이
 vector<int> palindrome(const string& S) {
+	// #a#b#c#d#e#
 	string ts = "";
 	for (auto i: S) {
 		ts += '#';
