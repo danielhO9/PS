@@ -2,6 +2,10 @@
 using namespace std;
 
 vector<int> aMatch, bMatch;
+char pk[50][50];
+map<pair<int, int>, int> M;
+int dy[4] = {-1, 1, 0, 0};
+int dx[4] = {0, 0, -1, 1};
 
 bool dfs(int a, vector<bool>& visited, vector<vector<int>>& adj) {
 	if (visited[a]) return false;
@@ -30,10 +34,36 @@ int bipartiteMatch(int MAX_N, int MAX_M, vector<vector<int>>& adj) {
 	return size;
 }
 
-// time complexity: V*E
-void solve() {
-	int MAX_N, MAX_M;
+vector<pair<int, int>> edge[100];
+int MAX_N, MAX_M;
+
+bool avail(int t) {
 	vector<vector<int>> adj(MAX_N);
 	int ans = bipartiteMatch(MAX_N, MAX_M, adj);
-	cout << ans;
+} 
+
+// time complexity: V*E
+void solve() {
+	int R, C; cin >> R >> C;
+	queue<pair<int, int>> Q;
+	int cnum = 0, pnum = 0;
+	for (int i = 0; i < R; ++i) {
+		string tmp; cin >> tmp;
+		for (int j = 0; j < C; ++j) {
+			pk[i][j] = tmp[j];
+			if (tmp[j] == 'C') {
+				M[{i, j}] = ++cnum;
+				Q.push({i, j});
+			}
+			if (tmp[j] == 'P') {
+				M[{i, j}] = ++pnum;
+			}
+		}
+	}
+	
+}
+
+int main() {
+	ios::sync_with_stdio(0); cin.tie(0);
+	solve();
 }
