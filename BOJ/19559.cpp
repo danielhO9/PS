@@ -9,6 +9,7 @@ bool vis[100001];
 double val[100001];
 int par[100001];
 const double MAX = 3.141592;
+deque<int> arr;
 
 bool dfs(int v, int p, int idx) {
 	bool ret = true;
@@ -31,8 +32,9 @@ bool dfs(int v, int p, int idx) {
 		} else {
 			a[u.first] = na;
 			b[u.first] = nb;
+			arr.push_back(-nb / na);
 			vis[u.first] = true;
-			if (dfs(u.first, v, idx)) ret = false;
+			if (!dfs(u.first, v, idx)) ret = false;
 		}
 
 	}
@@ -47,8 +49,26 @@ void solve() {
 		adj[v].push_back({u, t});
 	}
 	for (int i = 1; i <= N; ++i) if (!vis[i]) {
-		a[i] = 1; b[i] = 0; par[i] = i; val[i] = MAX;
-		if (!dfs(i, 0, i)) cout << "NO\n";
+		a[i] = 1; b[i] = 0; par[i] = i; val[i] = MAX; vis[i] = true;
+		arr = {0};
+		if (!dfs(i, 0, i)) {
+			cout << "NO";
+			return;
+		}
+		if (val[i] == MAX) {
+			sort(arr.begin(), arr.end());
+			int t = 1;
+			while (arr.size() > 1) {
+				if (t) arr.pop_back();
+				else arr.pop_front();
+				t ^= 1;
+			}
+			val[i] = arr[0];
+		}
+	}
+	cout << "YES\n";
+	for (int i = 1; i <= N; ++i) {
+		cout << val[par[i]] * a[i] + b[i] << ' ';
 	}
 }
 
