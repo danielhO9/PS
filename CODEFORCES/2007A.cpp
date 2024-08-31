@@ -2,13 +2,12 @@
 using namespace std;
 typedef long long ll;
 
-int n;
-int a[2000];
-
 void solve() {
-	cin >> n;
-	for (int i = 0; i < n; ++i) cin >> a[i];
-
+	int l, r; cin >> l >> r;
+	int cnt = r - l + 1;
+	cnt /= 2;
+	if (l % 2 && r % 2) ++cnt;
+	cout << cnt / 2 << "\n";
 }
 
 int main() {
