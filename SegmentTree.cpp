@@ -13,21 +13,21 @@ struct SegmentTree {
 		int h = (int)ceil(log2(sz));
 		int tree_size = (1 << (h + 1));
 		tree = vector<ll>(tree_size);
-		init_(1, 0, sz - 1);
+		init(1, 0, sz - 1);
 	}
-	void init_(int node, int start, int end) {
+	void init(int node, int start, int end) {
 		if (start == end) tree[node] = arr[start];
 		else {
-			init_(node * 2, start, (start + end) / 2);
-			init_(node * 2 + 1, (start + end) / 2 + 1, end);
+			init(node * 2, start, (start + end) / 2);
+			init(node * 2 + 1, (start + end) / 2 + 1, end);
 			tree[node] = tree[node * 2] + tree[node * 2 + 1];
 		}
 	}
 	void update(int node, int start, int end, int index, ll val) {
 		if (index < start || index > end) return;
 		if (start == end) {
-			arr[index] = val;
-			tree[node] = val;
+			arr[index] += val;
+			tree[node] += val;
 			return;
 		}
 		update(node * 2, start, (start + end) / 2, index, val);

@@ -54,42 +54,13 @@ struct PST {
 	ll query(int rt, int left, int right) {
 		return query(root[rt], 0, sz - 1, left, right);
 	}
-};
+} seg;
 
 void solve() {
-	PST seg;
-	int n, m; cin >> n >> m;
 	seg.init(1e5 + 1);
-	vector<int> pts[100001];
-	for (int i = 0; i < n; ++i) {
-		int x, y; cin >> x >> y;
-		pts[y].push_back(x);
-	}
-	for (int i = 0; i <= 1e5; ++i) {
-		if (i != 0) seg.setRoot();
-		for (int j: pts[i]) seg.update(i, j, 1);
-	}
-	ll ans = 0;
-    while (m--) {
-      int l, r, b, t;
-      cin >> l >> r >> b >> t;
-      ans += seg.query(t, l, r);
-	  if (b != 0) ans -= seg.query(b - 1, l, r);
-    }
-    cout << ans << '\n';
 }
-
-/*
-
-_____*
-__**__
-_*____
-______
-
-*/
 
 int main() {
 	ios::sync_with_stdio(0); cin.tie(0);
-	int t; cin >> t;
-	while (t--) solve();
+	solve();
 }

@@ -36,12 +36,12 @@ int lca(int u, int v) {
     return u;
 }
 
-void init() {
+void init(int v) {
 	const int h = f.size();
 	// root: 1
     dfs(1, -1, 0ll);
 	for (int i = 1; i < h; ++i) {
-		for (int j = 0; j < MAX_V; ++j) {
+		for (int j = 0; j < v; ++j) {
 			if (f[i - 1][j] == -1) f[i][j] = -1;
 			else f[i][j] = f[i - 1][f[i - 1][j]];
 		}
@@ -57,5 +57,5 @@ void solve() {
 	
 	int h = (int)ceil(log2(MAX_V)); ++h;
 	f = vector<vector<int>>(h, vector<int>(MAX_V));
-	init();
+	init(MAX_V);
 }
