@@ -127,7 +127,7 @@ void dfs2(int v, int p) {
 
 void solve() {
 	seg.init(1e5 + 1);
-	cin >> N >> M;
+	cin >> N;
 	for (int i = 1; i <= N; ++i) cin >> val[i];
 	for (int i = 0; i < N - 1; ++i) {
 		int u, v; cin >> u >> v;
@@ -147,6 +147,7 @@ void solve() {
 	}
 	for (int i = 1; i <= N; ++i) val[i] = toIdx[val[i]];
 	dfs2(1, 0);
+	cin >> M;
 	while (M--) {
 		int X, Y, K; cin >> X >> Y >> K;
 		int lc = lca(X, Y), lcap = 0;

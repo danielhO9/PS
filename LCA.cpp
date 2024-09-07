@@ -36,7 +36,7 @@ int lca(int u, int v) {
     return u;
 }
 
-void init(int v) {
+void init(int v = MAX_V) {
 	const int h = f.size();
 	// root: 1
     dfs(1, -1, 0ll);

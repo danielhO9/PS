@@ -16,12 +16,14 @@ struct PST {
 	void init(int sz_) {
 		sz = sz_;
 		ridx = 1;
-		root.push_back(1);
+		root.resize(sz);
+		root[0] = 1;
 	}
-	void setRoot() {
-        root.push_back(tree.size());
+	void changeRoot(int idx) { ridx = root[idx]; }
+	void setRoot(int idx) {
+        root[idx] = tree.size();
 		tree.push_back({tree[ridx].l, tree[ridx].r, tree[ridx].val});
-		ridx = root.back();
+		ridx = root[idx];
 	}
 	void update(int node, int start, int end, int index, ll val) {
 		if (index < start || index > end) return;
