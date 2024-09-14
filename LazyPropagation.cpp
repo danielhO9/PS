@@ -6,18 +6,18 @@ struct LazyPropagation {
 	vector<ll> arr;
 	vector<ll> tree;
 	vector<ll> lazy;
-	int sz;
+	ll sz;
 
-	void init(vector<ll>& a, int sz_) {
+	void init(vector<ll>& a, ll sz_) {
 		sz = sz_;
 		arr = a;
-		int h = (int)ceil(log2(sz));
-		int tree_size = (1 << (h + 1));
+		ll h = (ll)ceil(log2(sz));
+		ll tree_size = (1 << (h + 1));
 		tree = vector<ll>(tree_size);
 		lazy = vector<ll>(tree_size);
 		init_(1, 0, sz - 1);
 	}
-	void init_(int node, int start, int end) {
+	void init_(ll node, ll start, ll end) {
 		if (start == end) tree[node] = arr[start];
 		else {
 			init_(node * 2, start, (start + end) / 2);
@@ -25,7 +25,7 @@ struct LazyPropagation {
 			tree[node] = tree[node * 2] + tree[node * 2 + 1];
 		}
 	}
-	void update_lazy(int node, int start, int end) {
+	void update_lazy(ll node, ll start, ll end) {
 		if (lazy[node] != 0) {
 			tree[node] += (end - start + 1) * lazy[node];
 			if (start != end) {
@@ -35,7 +35,7 @@ struct LazyPropagation {
 			lazy[node] = 0;
 		}
 	}
-	void update_range(int node, int start, int end, int left, int right, ll diff) {
+	void update_range(ll node, ll start, ll end, ll left, ll right, ll diff) {
 		update_lazy(node, start, end);
 		if (left > end || right < start) {
 			return;
@@ -52,10 +52,10 @@ struct LazyPropagation {
 		update_range(node * 2 + 1, (start + end) / 2 + 1, end, left, right, diff);
 		tree[node] = tree[node * 2] + tree[node * 2 + 1];
 	}
-	void update(int left, int right, ll val) {
+	void update(ll left, ll right, ll val) {
 		update_range(1, 0, sz - 1, left, right, val);
 	}
-	ll query(int node, int start, int end, int left, int right) {
+	ll query(ll node, ll start, ll end, ll left, ll right) {
 		update_lazy(node, start, end);
 		if (left > end || right < start) {
 			return 0;
@@ -67,13 +67,13 @@ struct LazyPropagation {
 		ll rsum = query(node * 2 + 1, (start+end) / 2 + 1, end, left, right);
 		return lsum + rsum;
 	}
-	ll query(int left, int right) {
+	ll query(ll left, ll right) {
 		return query(1, 0, sz - 1, left, right);
 	}
 } seg;
 
 void solve() {
-	int MAX_N;
+	ll MAX_N;
     vector<ll> a(MAX_N);
     seg.init(a, MAX_N);
 }

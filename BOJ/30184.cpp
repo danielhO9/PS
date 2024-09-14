@@ -6,8 +6,17 @@ string T;
 vector<int> ans;
 int now = 0;
 
-void f(int x) {
+vector<char> ans;
+
+int f(int x) {
+	if (x == N) return now;
+	if (T[x + 1] != T[x]) {
+		ans.push_back(T[x]);
+		return f(x + 2);
+	}
+	int pos = now;
 	
+
 }
 
 void solve() {
