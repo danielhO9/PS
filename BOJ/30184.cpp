@@ -3,25 +3,43 @@ using namespace std;
 
 int N;
 string T;
-vector<int> ans;
 int now = 0;
 
 vector<char> ans;
 
-int f(int x) {
-	if (x == N) return now;
-	if (T[x + 1] != T[x]) {
-		ans.push_back(T[x]);
-		return f(x + 2);
+void f(int l, int r) {
+	// cout << l << ' ' << r << '\n';
+	if (l > r) return;
+	if (T[l + 1] != T[l]) {
+		ans.push_back(T[l]);
+		now += 2;
+		f(l + 2, r);
+		return;
 	}
 	int pos = now;
-	
-
+	int cnt = 0;
+	int nr = r;
+	while (cnt != 0 || T[nr] == T[l]) {
+		if (T[nr] == 'S') ++cnt;
+		else --cnt;
+        --nr;
+	}
+	f(nr + 1, r);
+	while (now > pos) {
+		--now;
+		ans.push_back('N');
+	}
+	ans.push_back(T[l]);
+	ans.push_back('N');
+	++now;
+	return f(l + 1, nr - 1);
 }
 
 void solve() {
 	cin >> N >> T;
-
+	f(0, N - 1);
+    cout << ans.size() << '\n';
+	for (auto i: ans) cout << i;
 }
 
 int main() {
