@@ -11,7 +11,7 @@ struct PST {
 	vector<Node> tree = {{0, 0, 0}, {0, 0, 0}};
 	vector<int> root;
 	int sz;
-	int ridx;
+	int ridx; // current root = root[ridx]
 
 	void init(int sz_) {
 		sz = sz_;
@@ -20,7 +20,8 @@ struct PST {
 		root[0] = 1;
 	}
 	void changeRoot(int idx) { ridx = root[idx]; }
-	void setRoot(int idx) {
+	
+	void newRoot(int idx) {
         root[idx] = tree.size();
 		tree.push_back({tree[ridx].l, tree[ridx].r, tree[ridx].val});
 		ridx = root[idx];
@@ -59,5 +60,6 @@ struct PST {
 } seg;
 
 void solve() {
+	// root(vector) size
 	seg.init(1e5 + 1);
 }
