@@ -5,11 +5,13 @@ typedef long long ll;
 ll n;
 ll t[2000];
 ll cache[2000][2000];
-vector<pair<ll, ll>> l[2000], r[2000];
+deque<pair<ll, ll>> l[2000], r[2000];
 
 void solve() {
 	cin >> n;
 	for (ll i = 0; i < n; ++i) cin >> t[i];
+	// n = 2000;
+	// for (int i = 0; i < 2000; ++i) t[i] = i + 1;
 	for (ll i = 0; i < n; ++i) for (ll j = 0; j < n; ++j) cache[i][j] = INT32_MAX;
 
 	for (ll i = 0; i < n; ++i) cache[i][i] = t[i];
@@ -23,12 +25,37 @@ void solve() {
 	for (ll dif = 1; dif < n; ++dif) {
 		for (ll s = 0; s + dif < n; ++s) {
 			// s, s + dif
-			for (auto& [_, i]: l[s + dif]) {
-				cache[s][s + dif] = min(cache[s][s + dif], max((i - 1 >= s ? cache[s][i - 1] : 0) + t[i], (i + 1 <= s + dif ? cache[i + 1][s + dif] : 0) + t[i]));
+			ll left = s, right = s + dif;
+			while (left + 1 < right) {
+				ll mid = (left + right) / 2;
+				ll ls = cache[s][mid - 1];
+				ll rs = cache[mid + 1][s + dif];
+				if (rs >= ls) left = mid;
+				else right = mid; 
 			}
-			for (auto& [_, i]: r[s]) {
-				cache[s][s + dif] = min(cache[s][s + dif], max((i - 1 >= s ? cache[s][i - 1] : 0) + t[i], (i + 1 <= s + dif ? cache[i + 1][s + dif] : 0) + t[i]));
+			while (!l[s + dif].empty() && l[s + dif].front().second > left) l[s + dif].pop_front();
+
+			if (!l[s + dif].empty()) {
+				int idx = l[s + dif].front().second;
+				cache[s][s + dif] = min(cache[s][s + dif], (idx + 1 <= s + dif ? cache[idx + 1][s + dif] : 0) + t[idx]);
 			}
+
+			left = s, right = s + dif;
+			while (left + 1 < right) {
+				ll mid = (left + right) / 2;
+				ll ls = cache[s][mid - 1];
+				ll rs = cache[mid + 1][s + dif];
+				if (ls >= rs) right = mid;
+				else left = mid; 
+			}
+			while (!r[s].empty() && r[s].front().second < right) r[s].pop_front();
+
+			if (!r[s].empty()) {
+				int idx = r[s].front().second;
+				cache[s][s + dif] = min(cache[s][s + dif], (idx - 1 >= s ? cache[s][idx - 1] : 0) + t[idx]);
+			}
+
+
 			if (s + dif + 1 < n) {
 				ll val = cache[s][s + dif] + t[s + dif + 1];
 				while (!r[s].empty() && r[s].back().first >= val) r[s].pop_back();
@@ -42,6 +69,7 @@ void solve() {
 			}
 		}
 	}
+
 	cout << cache[0][n - 1];
 }
 
