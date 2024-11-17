@@ -30,7 +30,5 @@ vector<ll> convolute(vector<ll>& A, vector<ll>& B) {
         a[i] *= b[i];
     }
     fwht_xor(a, true);
-    vector<ll> ret;
-	while (ret.back() == 0) ret.pop_back();
-    return ret;
+    return a;
 }
