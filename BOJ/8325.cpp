@@ -23,16 +23,22 @@ void solve() {
 	}
 
 	for (ll dif = 1; dif < n; ++dif) {
+		int iidx = 0;
+
 		for (ll s = 0; s + dif < n; ++s) {
 			// s, s + dif
-			ll left = s, right = s + dif;
-			while (left + 1 < right) {
-				ll mid = (left + right) / 2;
-				ll ls = cache[s][mid - 1];
-				ll rs = cache[mid + 1][s + dif];
-				if (rs >= ls) left = mid;
-				else right = mid; 
+
+			while (iidx < s) ++iidx;
+			while (iidx + 2 <= s + dif) {
+				ll ls = cache[s][iidx];
+				ll rs = cache[iidx + 2][s + dif];
+				if (rs >= ls) ++iidx;
+				else break;
 			}
+			while (iidx + 2 <= s + dif && cache[s][iidx] <= cache[iidx + 2][s + dif]) ++iidx;
+
+			ll left = iidx;
+
 			while (!l[s + dif].empty() && l[s + dif].front().second > left) l[s + dif].pop_front();
 
 			if (!l[s + dif].empty()) {
@@ -40,21 +46,13 @@ void solve() {
 				cache[s][s + dif] = min(cache[s][s + dif], (idx + 1 <= s + dif ? cache[idx + 1][s + dif] : 0) + t[idx]);
 			}
 
-			left = s, right = s + dif;
-			while (left + 1 < right) {
-				ll mid = (left + right) / 2;
-				ll ls = cache[s][mid - 1];
-				ll rs = cache[mid + 1][s + dif];
-				if (ls >= rs) right = mid;
-				else left = mid; 
-			}
+			ll right = left + 1;
 			while (!r[s].empty() && r[s].front().second < right) r[s].pop_front();
 
 			if (!r[s].empty()) {
 				int idx = r[s].front().second;
 				cache[s][s + dif] = min(cache[s][s + dif], (idx - 1 >= s ? cache[s][idx - 1] : 0) + t[idx]);
 			}
-
 
 			if (s + dif + 1 < n) {
 				ll val = cache[s][s + dif] + t[s + dif + 1];
