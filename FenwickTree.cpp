@@ -10,6 +10,7 @@ ll sum(vector<ll> &tree, int i) {
     }
     return ans;
 }
+
 void update(vector<ll> &tree, int i, ll diff) {
     while (i < tree.size()) {
         tree[i] += diff;
