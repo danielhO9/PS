@@ -51,7 +51,6 @@ void solve() {
 	}
 	segu.modify(S, -S * U);
 	segd.modify(S, S * D);
-
 	vector<ll> his;
 	vector<ll> upd;
 	for (int i = 1; i < N - 1; ++i) {

@@ -8,6 +8,8 @@ struct LazyPropagation {
 	vector<ll> lazy;
 	ll sz;
 
+	inline ll agg(ll a, ll b) { return a + b; }
+
 	void init(vector<ll>& a, ll sz_) {
 		sz = sz_;
 		arr = a;
@@ -22,15 +24,15 @@ struct LazyPropagation {
 		else {
 			init_(node * 2, start, (start + end) / 2);
 			init_(node * 2 + 1, (start + end) / 2 + 1, end);
-			tree[node] = tree[node * 2] + tree[node * 2 + 1];
+			tree[node] = agg(tree[node * 2], tree[node * 2 + 1]);
 		}
 	}
 	void update_lazy(ll node, ll start, ll end) {
 		if (lazy[node] != 0) {
-			tree[node] += (end - start + 1) * lazy[node];
+			tree[node] += (end - start + 1) * lazy[node]; // modify
 			if (start != end) {
-				lazy[node * 2] += lazy[node];
-				lazy[node * 2 + 1] += lazy[node];
+				lazy[node * 2] += lazy[node]; // modify
+				lazy[node * 2 + 1] += lazy[node]; // modify
 			}
 			lazy[node] = 0;
 		}
@@ -41,31 +43,27 @@ struct LazyPropagation {
 			return;
 		}
 		if (left <= start && end <= right) {
-			tree[node] += (end - start + 1) * diff;
+			tree[node] += (end - start + 1) * diff; // modify
 			if (start != end) {
-				lazy[node * 2] += diff;
-				lazy[node * 2 + 1] += diff;
+				lazy[node * 2] += diff; // modify
+				lazy[node * 2 + 1] += diff; // modify
 			}
 			return;
 		}
 		update_range(node * 2, start, (start + end) / 2, left, right, diff);
 		update_range(node * 2 + 1, (start + end) / 2 + 1, end, left, right, diff);
-		tree[node] = tree[node * 2] + tree[node * 2 + 1];
+		tree[node] = agg(tree[node * 2], tree[node * 2 + 1]);
 	}
 	void update(ll left, ll right, ll val) {
 		update_range(1, 0, sz - 1, left, right, val);
 	}
 	ll query(ll node, ll start, ll end, ll left, ll right) {
 		update_lazy(node, start, end);
-		if (left > end || right < start) {
-			return 0;
-		}
-		if (left <= start && end <= right) {
-			return tree[node];
-		}
+		if (left > end || right < start) return 0; // modify
+		if (left <= start && end <= right) return tree[node];
 		ll lsum = query(node * 2, start, (start+end) / 2, left, right);
 		ll rsum = query(node * 2 + 1, (start+end) / 2 + 1, end, left, right);
-		return lsum + rsum;
+		return agg(lsum, rsum);
 	}
 	ll query(ll left, ll right) {
 		return query(1, 0, sz - 1, left, right);
