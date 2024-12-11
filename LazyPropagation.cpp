@@ -31,8 +31,8 @@ struct LazyPropagation {
 		if (lazy[node] != 0) {
 			tree[node] += (end - start + 1) * lazy[node]; // modify
 			if (start != end) {
-				lazy[node * 2] += lazy[node]; // modify
-				lazy[node * 2 + 1] += lazy[node]; // modify
+				lazy[node * 2] = agg(lazy[node * 2], lazy[node]); // modify
+				lazy[node * 2 + 1] = agg(lazy[node * 2 + 1], lazy[node]); // modify
 			}
 			lazy[node] = 0;
 		}
@@ -45,8 +45,8 @@ struct LazyPropagation {
 		if (left <= start && end <= right) {
 			tree[node] += (end - start + 1) * diff; // modify
 			if (start != end) {
-				lazy[node * 2] += diff; // modify
-				lazy[node * 2 + 1] += diff; // modify
+				lazy[node * 2] = agg(lazy[node * 2], diff); // modify
+				lazy[node * 2 + 1] = agg(lazy[node * 2 + 1], diff); // modify
 			}
 			return;
 		}

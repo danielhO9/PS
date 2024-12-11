@@ -29,8 +29,8 @@ struct SegmentTree {
 	void update(int node, int start, int end, int index, ll val) {
 		if (index < start || index > end) return;
 		if (start == end) {
-			arr[index] += val; // modify
-			tree[node] += val; // modify
+			arr[index] = agg(arr[index], val); // modify
+			tree[node] = agg(tree[node], val); // modify
 			return;
 		}
 		update(node * 2, start, (start + end) / 2, index, val);

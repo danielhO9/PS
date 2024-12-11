@@ -1,20 +1,24 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-const int MAX_N = 100001;
-int par[MAX_N];
+struct UF {
+	int sz;
+	vector<int> par;
 
-int find(int x) {
-	if (par[x] == x) return x;
-	par[x] = find(par[x]);
-	return par[x];
-}
+	void init(int _sz) {
+		sz = _sz;
+		par.resize(sz);
+		for (int i = 0; i < sz; ++i) par[i] = i;
+	}
 
-void union_path(int x, int y) {
-	x = find(x); y = find(y);
-	par[x] = y;
-}
+	int find(int x) {
+		if (par[x] == x) return x;
+		par[x] = find(par[x]);
+		return par[x];
+	}
 
-void solve() {
-	for (int i = 0; i < MAX_N; ++i) par[i] = i;
-}
+	void union_path(int x, int y) {
+		x = find(x); y = find(y);
+		par[x] = y;
+	}
+};

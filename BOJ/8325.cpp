@@ -2,16 +2,18 @@
 using namespace std;
 typedef long long ll;
 
+const int MAX_N = 2000;
+
 ll n;
-ll t[2000];
-ll cache[2000][2000];
-deque<pair<ll, ll>> l[2000], r[2000];
+ll t[MAX_N];
+ll cache[MAX_N][MAX_N];
+deque<pair<ll, ll>> l[MAX_N], r[MAX_N];
 
 void solve() {
 	cin >> n;
 	for (ll i = 0; i < n; ++i) cin >> t[i];
-	// n = 2000;
-	// for (int i = 0; i < 2000; ++i) t[i] = i + 1;
+	// n = MAX_N;
+	// for (int i = 0; i < MAX_N; ++i) t[i] = i + 1;
 	for (ll i = 0; i < n; ++i) for (ll j = 0; j < n; ++j) cache[i][j] = INT32_MAX;
 
 	for (ll i = 0; i < n; ++i) cache[i][i] = t[i];
