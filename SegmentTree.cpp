@@ -22,7 +22,6 @@ struct SegmentTree {
 		else {
 			init(node * 2, start, (start + end) / 2);
 			init(node * 2 + 1, (start + end) / 2 + 1, end);
-			tree[node] = tree[node * 2] + tree[node * 2 + 1];
 			tree[node] = agg(tree[node * 2], tree[node * 2 + 1]);
 		}
 	}
@@ -35,7 +34,6 @@ struct SegmentTree {
 		}
 		update(node * 2, start, (start + end) / 2, index, val);
 		update(node * 2 + 1, (start + end) / 2 + 1, end, index, val);
-		tree[node] = tree[node * 2] + tree[node * 2 + 1];
 		tree[node] = agg(tree[node * 2], tree[node * 2 + 1]);
 	}
 	void update(int index, ll val) {
