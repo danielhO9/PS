@@ -51,6 +51,7 @@ struct SegmentTree {
 	ll query(int left, int right) { return query(1, 0, sz - 1, left, right); }
 };
 
+// root: 1
 struct HLD {
 	SegmentTree seg;
 	vector<int> sz, dep, par, top, in, out;
@@ -105,3 +106,86 @@ struct HLD {
 		return ret;
 	}
 };
+
+struct UF {
+	int sz;
+	vector<int> par;
+
+	void init(int _sz) {
+		sz = _sz;
+		par.resize(sz);
+		for (int i = 0; i < sz; ++i) par[i] = i;
+	}
+
+	int find(int x) {
+		if (par[x] == x) return x;
+		par[x] = find(par[x]);
+		return par[x];
+	}
+
+	void union_path(int x, int y) {
+		x = find(x); y = find(y);
+		par[x] = y;
+	}
+};
+
+struct Query {
+	int t, a, b;
+};
+
+int N, Q;
+vector<Query> q;
+vector<string> ans;
+
+void solve() {
+	cin >> N;
+	vector<ll> a(N + 1);
+	for (int i = 1; i <= N; ++i) cin >> a[i];
+	UF uf; uf.init(N + 1);
+	cin >> Q;
+	for (int i = 0; i < Q; ++i) {
+		int t, a, b;
+		string tmp; cin >> tmp >> a >> b;
+		if (tmp == "bridge") {
+			t = 0;
+			if (uf.find(a) == uf.find(b)) {
+				ans.push_back("no");
+			} else {
+				ans.push_back("yes");
+				adj[a].push_back(b);
+				adj[b].push_back(a);
+				uf.union_path(a, b);
+			}
+		} else if (tmp == "penguins") {
+			t = 1;
+			ans.push_back("");
+		}
+		else {
+			t = 2;
+			if (uf.find(a) != uf.find(b)) {
+				ans.push_back("impossible");
+			} else {
+				ans.push_back("");
+			}
+		}
+		q.push_back({t, a, b});
+	}
+	HLD hld;
+	hld.init(a);
+	for (int i = 0; i < Q; ++i) {
+		if (q[i].t == 0) {
+			cout << ans[i] << '\n';
+			continue;
+		}
+		if (q[i].t == 1) hld.update(q[i].a, q[i].b);
+		else {
+			if (ans[i] == "") ans[i] = to_string(hld.query(q[i].a, q[i].b));
+			cout << ans[i] << '\n';
+		}
+	}
+}
+
+int main() {
+	ios::sync_with_stdio(0); cin.tie(0);
+	solve();
+}

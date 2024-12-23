@@ -9,14 +9,15 @@ struct SegmentTree {
 
 	inline ll agg(ll a, ll b) { return a + b; }
 
-	void init(vector<ll>& a, int sz_) {
-		sz = sz_;
+	void init(vector<ll>& a) {
+		sz = a.size();
 		arr = a;
 		int h = (int)ceil(log2(sz));
 		int tree_size = (1 << (h + 1));
 		tree = vector<ll>(tree_size);
 		init(1, 0, sz - 1);
 	}
+
 	void init(int node, int start, int end) {
 		if (start == end) tree[node] = arr[start];
 		else {
@@ -25,6 +26,7 @@ struct SegmentTree {
 			tree[node] = agg(tree[node * 2], tree[node * 2 + 1]);
 		}
 	}
+
 	void update(int node, int start, int end, int index, ll val) {
 		if (index < start || index > end) return;
 		if (start == end) {
@@ -36,9 +38,9 @@ struct SegmentTree {
 		update(node * 2 + 1, (start + end) / 2 + 1, end, index, val);
 		tree[node] = agg(tree[node * 2], tree[node * 2 + 1]);
 	}
-	void update(int index, ll val) {
-		update(1, 0, sz - 1, index, val);
-	}
+
+	void update(int index, ll val) { update(1, 0, sz - 1, index, val); }
+
 	ll query(int node, int start, int end, int left, int right) {
 		if (left > end || right < start) return 0; // modify
 		if (left <= start && end <= right) return tree[node];
@@ -46,13 +48,12 @@ struct SegmentTree {
 		ll rsum = query(node * 2 + 1, (start + end) / 2 + 1, end, left, right);
 		return agg(lsum, rsum);
 	}
-	ll query(int left, int right) {
-		return query(1, 0, sz - 1, left, right);
-	}
+
+	ll query(int left, int right) { return query(1, 0, sz - 1, left, right); }
 } seg;
 
 void solve() {
 	int MAX_N;
 	vector<ll> arr(MAX_N);
-	seg.init(arr, MAX_N);
+	seg.init(arr);
 }

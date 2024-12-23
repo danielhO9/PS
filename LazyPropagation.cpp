@@ -10,8 +10,8 @@ struct LazyPropagation {
 
 	inline ll agg(ll a, ll b) { return a + b; }
 
-	void init(vector<ll>& a, ll sz_) {
-		sz = sz_;
+	void init(vector<ll>& a) {
+		sz = a.size();
 		arr = a;
 		ll h = (ll)ceil(log2(sz));
 		ll tree_size = (1 << (h + 1));
@@ -19,6 +19,7 @@ struct LazyPropagation {
 		lazy = vector<ll>(tree_size);
 		init_(1, 0, sz - 1);
 	}
+
 	void init_(ll node, ll start, ll end) {
 		if (start == end) tree[node] = arr[start];
 		else {
@@ -27,6 +28,7 @@ struct LazyPropagation {
 			tree[node] = agg(tree[node * 2], tree[node * 2 + 1]);
 		}
 	}
+
 	void update_lazy(ll node, ll start, ll end) {
 		if (lazy[node] != 0) {
 			tree[node] += (end - start + 1) * lazy[node]; // modify
@@ -37,6 +39,7 @@ struct LazyPropagation {
 			lazy[node] = 0;
 		}
 	}
+
 	void update_range(ll node, ll start, ll end, ll left, ll right, ll diff) {
 		update_lazy(node, start, end);
 		if (left > end || right < start) {
@@ -54,24 +57,23 @@ struct LazyPropagation {
 		update_range(node * 2 + 1, (start + end) / 2 + 1, end, left, right, diff);
 		tree[node] = agg(tree[node * 2], tree[node * 2 + 1]);
 	}
-	void update(ll left, ll right, ll val) {
-		update_range(1, 0, sz - 1, left, right, val);
-	}
+
+	void update(ll left, ll right, ll val) { update_range(1, 0, sz - 1, left, right, val); }
+
 	ll query(ll node, ll start, ll end, ll left, ll right) {
 		update_lazy(node, start, end);
 		if (left > end || right < start) return 0; // modify
 		if (left <= start && end <= right) return tree[node];
-		ll lsum = query(node * 2, start, (start+end) / 2, left, right);
-		ll rsum = query(node * 2 + 1, (start+end) / 2 + 1, end, left, right);
+		ll lsum = query(node * 2, start, (start + end) / 2, left, right);
+		ll rsum = query(node * 2 + 1, (start + end) / 2 + 1, end, left, right);
 		return agg(lsum, rsum);
 	}
-	ll query(ll left, ll right) {
-		return query(1, 0, sz - 1, left, right);
-	}
+
+	ll query(ll left, ll right) { return query(1, 0, sz - 1, left, right); }
 } seg;
 
 void solve() {
 	ll MAX_N;
     vector<ll> a(MAX_N);
-    seg.init(a, MAX_N);
+    seg.init(a);
 }
