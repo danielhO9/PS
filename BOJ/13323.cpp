@@ -1,20 +1,28 @@
 #include <bits/stdc++.h>
 using namespace std;
-typedef long long LL;
-int N, A;
-LL ans;
-priority_queue<int, vector<int>, less<>> Q;
+typedef long long ll;
+
+int N;
+ll A[1000000];
+
+void solve() {
+	cin >> N;
+	for (int i = 0; i < N; ++i) cin >> A[i];
+	for (int i = 0; i < N; ++i) A[i] -= i;
+	priority_queue<ll> pq;
+	ll ans = 0;
+	for (int i = 0; i < N; ++i) {
+		pq.push(A[i]);
+		if (pq.top() > A[i]) {
+			ans += pq.top() - A[i];
+			pq.pop();
+			pq.push(A[i]);
+		}
+	}
+	cout << ans;
+}
 
 int main() {
-    ios::sync_with_stdio(0); cin.tie(0);
-    cin >> N;
-    for (int i = 1; i <= N; ++i) {
-        cin >> A;
-        Q.push(A - i);
-        if (A < Q.top() + i) {
-            ans += Q.top() - A + i;
-            Q.pop(); Q.push(A - i);
-        }
-    }
-    cout << ans;
+	ios::sync_with_stdio(0); cin.tie(0);
+	solve();
 }
