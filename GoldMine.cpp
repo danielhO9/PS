@@ -6,54 +6,61 @@ struct Node {
 	ll lMax, rMax, max, sum;
 };
 
-Node merge(Node l, Node r) {
-	Node ret;
-	ret.lMax = max(l.lMax, l.sum + r.lMax);
-	ret.rMax = max(r.rMax, r.sum + l.rMax);
-	ret.max = max({l.max, r.max, l.rMax + r.lMax});
-	ret.sum = l.sum + r.sum;
-	return ret;
-}
+struct SegmentTree {
+	vector<ll> arr;
+	vector<Node> tree;
+	int sz;
 
-void init(vector<ll>& a, vector<Node>& tree, int node, int start, int end) {
-	if (start == end) {
-		tree[node] = {a[start], a[start], a[start], a[start]};
+	inline Node merge(Node l, Node r) {
+		Node ret;
+		ret.lMax = max(l.lMax, l.sum + r.lMax);
+		ret.rMax = max(r.rMax, r.sum + l.rMax);
+		ret.max = max({l.max, r.max, l.rMax + r.lMax});
+		ret.sum = l.sum + r.sum;
+		return ret;
 	}
-	else {
-		init(a, tree, node * 2, start, (start + end) / 2);
-		init(a, tree, node * 2 + 1, (start + end) / 2 + 1, end);
+
+	void init(vector<ll>& a) {
+		sz = a.size();
+		arr = a;
+		int h = (int)ceil(log2(sz));
+		int tree_size = (1 << (h + 1));
+		tree = vector<Node>(tree_size);
+		init(1, 0, sz - 1);
+	}
+
+	void init(int node, int start, int end) {
+		if (start == end) {
+			tree[node] = {arr[start], arr[start], arr[start], arr[start]};
+		}
+		else {
+			init(node * 2, start, (start + end) / 2);
+			init(node * 2 + 1, (start + end) / 2 + 1, end);
+			tree[node] = merge(tree[node * 2], tree[node * 2 + 1]);
+		}
+	}
+
+	void update(int node, int start, int end, int index, ll val) {
+		if (index < start || index > end) return;
+		if (start == end) {
+			arr[index] = val;
+			tree[node] = {val, val, val, val};
+			return;
+		}
+		update(node * 2, start, (start + end) / 2, index, val);
+		update(node * 2 + 1, (start + end) / 2 + 1, end, index, val);
 		tree[node] = merge(tree[node * 2], tree[node * 2 + 1]);
 	}
-}
 
-void update(vector<ll>& a, vector<Node>& tree, int node, int start, int end, int index, ll val) {
-	if (index < start || index > end) return;
-	if (start == end) {
-		a[index] = val;
-		tree[node] = {val, val, val, val};
-		return;
+	Node query(int node, int start, int end, int left, int right) {
+		if (left > end || right < start) return {INT32_MIN, INT32_MIN, INT32_MIN, INT32_MIN};
+		if (left <= start && end <= right) return tree[node];
+		Node l = query(node * 2, start, (start + end) / 2, left, right);
+		Node r = query(node * 2 + 1, (start + end) / 2 + 1, end, left, right);
+		return merge(l, r);
 	}
-	update(a, tree, node * 2, start, (start + end) / 2, index, val);
-	update(a, tree, node * 2 + 1, (start + end) / 2 + 1, end, index, val);
-	tree[node] = merge(tree[node * 2], tree[node * 2 + 1]);
-}
 
-Node query(vector<Node>& tree, int node, int start, int end, int left, int right) {
-	if (left > end || right < start) return {INT32_MIN, INT32_MIN, INT32_MIN, INT32_MIN};
-	if (left <= start && end <= right) return tree[node];
-	Node l = query(tree, node * 2, start, (start + end) / 2, left, right);
-	Node r = query(tree, node * 2 + 1, (start + end) / 2 + 1, end, left, right);
-	return merge(l, r);
-}
+	void update(int index, ll val) { update(1, 0, sz - 1, index, val); }
 
-void solve() {
-	// 0 ~ MAX_N - 1
-	int MAX_N;
-	vector<ll> arr(MAX_N);
-	int h = (int)ceil(log2(MAX_N));
-	int tree_size = (1 << (h + 1));
-	vector<Node> tree(tree_size);
-	// init(arr, tree, 1, 0, MAX_N - 1);
-	// update(arr, tree, 1, 0, MAX_N - 1, cur, 30);
-	// query(tree, 1, 0, MAX_N - 1, 0, cur);
-}
+	Node query(int left, int right) { return query(1, 0, sz - 1, left, right); }
+} seg;

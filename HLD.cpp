@@ -6,7 +6,7 @@ typedef long long ll;
 const int MAX_V = 30001;
 vector<int> adj[MAX_V];
 
-inline ll agg(ll a, ll b) { return a + b; }
+inline ll merge(ll a, ll b) { return a + b; }
 
 struct SegmentTree {
 	vector<ll> arr;
@@ -26,7 +26,7 @@ struct SegmentTree {
 		else {
 			init(node * 2, start, (start + end) / 2);
 			init(node * 2 + 1, (start + end) / 2 + 1, end);
-			tree[node] = agg(tree[node * 2], tree[node * 2 + 1]);
+			tree[node] = merge(tree[node * 2], tree[node * 2 + 1]);
 		}
 	}
 	void update(int node, int start, int end, int index, ll val) {
@@ -38,16 +38,16 @@ struct SegmentTree {
 		}
 		update(node * 2, start, (start + end) / 2, index, val);
 		update(node * 2 + 1, (start + end) / 2 + 1, end, index, val);
-		tree[node] = agg(tree[node * 2], tree[node * 2 + 1]);
+		tree[node] = merge(tree[node * 2], tree[node * 2 + 1]);
 	}
-	void update(int index, ll val) { update(1, 0, sz - 1, index, val); }
 	ll query(int node, int start, int end, int left, int right) {
 		if (left > end || right < start) return 0; // modify
 		if (left <= start && end <= right) return tree[node];
 		ll lsum = query(node * 2, start, (start + end) / 2, left, right);
 		ll rsum = query(node * 2 + 1, (start + end) / 2 + 1, end, left, right);
-		return agg(lsum, rsum);
+		return merge(lsum, rsum);
 	}
+	void update(int index, ll val) { update(1, 0, sz - 1, index, val); }
 	ll query(int left, int right) { return query(1, 0, sz - 1, left, right); }
 };
 
@@ -97,11 +97,11 @@ struct HLD {
 		while (top[a] != top[b]) {
 			if (dep[top[a]] < dep[top[b]]) swap(a, b);
 			int st = top[a];
-			ret = agg(ret, seg.query(in[st], in[a]));
+			ret = merge(ret, seg.query(in[st], in[a]));
 			a = par[st];
 		}
 		if(dep[a] > dep[b]) swap(a, b);
-		ret = agg(ret, seg.query(in[a], in[b]));
+		ret = merge(ret, seg.query(in[a], in[b]));
 		return ret;
 	}
 };
