@@ -286,22 +286,6 @@ private:
 	}
 };
 
-
-int main() {
-    ios::sync_with_stdio(false); cin.tie(NULL);
-    RBT<int> rbt(NULL);
-	// cout << typeid(rbt).name();
-	int N; cin >> N;
-	for (int i = 0; i < N; ++i) {
-		int x; cin >> x;
-		if (x != 0) rbt.insert(x);
-		else {
-			if (rbt.root == NULL) cout << 0 << '\n';
-			else {
-				int mn = rbt.min()->key;
-				rbt.delete_rbt(mn);
-				cout << mn << '\n';
-			}
-		}
-	}
+void solve() {
+	RBT<int> rbt(NULL);
 }
