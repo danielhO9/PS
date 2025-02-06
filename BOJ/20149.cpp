@@ -184,12 +184,11 @@ vector<Point<T>> hpi(vector<Line<T>> lines) {
 
 int main() {
 	ios::sync_with_stdio(0); cin.tie(0);
-	int n; cin >> n;
-	vector<Point<double>> pts(n);
-	for (int i = 0; i < n; ++i) cin >> pts[i].x >> pts[i].y;
-	auto res = mec(pts);
-	cout.precision(3);
+	Line<double> lines[2];
+	for (int i = 0; i < 2; ++i) cin >> lines[i].s.x >> lines[i].s.y >> lines[i].e.x >> lines[i].e.y;
+	auto res = lines[0].segInter(lines[1]);
+	cout << abs(res.first) << '\n';
+	cout.precision(10);
 	cout << fixed;
-	cout << res.c.x << ' ' << res.c.y << '\n';
-	cout << res.r;
+	if (res.first == 1) cout << res.second.x << ' ' << res.second.y << "\n";
 }

@@ -70,7 +70,6 @@ struct Line {
 template<class T>
 struct Circle {
 	Point<T> c; T r;
-	bool inCircle(Point<T> p) const { return (p - c).dist() < r * (1 + EPS); }
 };
 
 template<class T>
@@ -95,18 +94,20 @@ Circle<T> ccCenter(const Point<T>& a, const Point<T>& b, const Point<T>& c) {
 template<class T>
 Circle<T> mec(vector<Point<T>> pts) {
 	shuffle(pts.begin(), pts.end(), mt19937(time(0)));
-	Circle<T> c = {pts[0], 0};
-	for (int i = 0; i < pts.size(); ++i) if (!c.inCircle(pts[i])) {
-		c = {pts[i], 0};
-		for (int j = 0; j < i; ++j) if (!c.inCircle(pts[j])) {
-			c.c = (pts[i] + pts[j]) / 2;
-			c.r = (c.c - pts[i]).dist();
-			for (int k = 0; k < j; ++k) if (!c.inCircle(pts[k])) {
-				c = ccCenter(pts[i], pts[j], pts[k]);
+	Point<T> o = pts[0];
+	T r = 0;
+	for (int i = 0; i < pts.size(); ++i) if ((o - pts[i]).dist() > r * (1.0 + EPS)) {
+		o = pts[i], r = 0;
+		for (int j = 0; j < i; ++j) if ((o - pts[j]).dist() > r * (1.0 + EPS)) {
+			o = (pts[i] + pts[j]) / 2;
+			r = (o - pts[i]).dist();
+			for (int k = 0; k < j; ++k) if ((o - pts[k]).dist() > r * (1.0 + EPS)) {
+				o = ccCenter(pts[i], pts[j], pts[k]);
+				r = (o - pts[i]).dist();
 			}
 		}
 	}
-	return c;
+	return {o, r};
 }
 
 template<class P>
@@ -184,12 +185,27 @@ vector<Point<T>> hpi(vector<Line<T>> lines) {
 
 int main() {
 	ios::sync_with_stdio(0); cin.tie(0);
-	int n; cin >> n;
-	vector<Point<double>> pts(n);
-	for (int i = 0; i < n; ++i) cin >> pts[i].x >> pts[i].y;
-	auto res = mec(pts);
-	cout.precision(3);
-	cout << fixed;
-	cout << res.c.x << ' ' << res.c.y << '\n';
-	cout << res.r;
+	int n;
+	while (true) {
+		cin >> n;
+		if (n == 0) break;
+		vector<Point<ld>> pts(n);
+		for (int i = 0; i < n; ++i) cin >> pts[i].x >> pts[i].y;
+		vector<Line<ld>> lines;
+		for (int i = 0; i < n; ++i) {
+			int j = (i + 1) % n;
+			lines.push_back({pts[i], pts[j]});
+		}
+		ld l = 0, r = 20000.0, mid;
+		for (int t = 0; t < 50; ++t) {
+			mid = (l + r) / 2;
+			vector<Line<ld>> nlines = lines;
+			for (auto& i: nlines) i = i.normTrans(mid);
+			if (hpi(nlines).empty()) r = mid;
+			else l = mid;
+		}
+		cout.precision(6);
+		cout << fixed;
+		cout << l << "\n";
+	}
 }

@@ -3,7 +3,7 @@ using namespace std;
 typedef long long ll;
 typedef long double ld;
 
-const double EPS = 1e-9;
+const long double EPS = 1e-9;
 
 template<class T>
 struct Point {
@@ -67,48 +67,6 @@ struct Line {
 	}
 };
 
-template<class T>
-struct Circle {
-	Point<T> c; T r;
-	bool inCircle(Point<T> p) const { return (p - c).dist() < r * (1 + EPS); }
-};
-
-template<class T>
-T polygonArea2(vector<Point<T>>& v) {
-	T a = v.back().cross(v[0]);
-	for (int i = 0; i < v.size() - 1; ++i)
-	a += v[i].cross(v[i + 1]);
-	return abs(a);
-}
-
-// circumcircle center
-template<class T>
-Circle<T> ccCenter(const Point<T>& a, const Point<T>& b, const Point<T>& c) {
-	Point<T> nb = c - a, nc = b - a;
-	Point<T> na = a;
-	Point<T> center = na + (nb * nc.dist2() - nc * nb.dist2()).perp() / nb.cross(nc) / 2;
-	T r = (b - a).dist() * (c - b).dist() * (a - c).dist() / (double) abs((b - a).cross(c - a)) / 2.0;
-	return {center, r};
-}
-
-// minimum enclosing center
-template<class T>
-Circle<T> mec(vector<Point<T>> pts) {
-	shuffle(pts.begin(), pts.end(), mt19937(time(0)));
-	Circle<T> c = {pts[0], 0};
-	for (int i = 0; i < pts.size(); ++i) if (!c.inCircle(pts[i])) {
-		c = {pts[i], 0};
-		for (int j = 0; j < i; ++j) if (!c.inCircle(pts[j])) {
-			c.c = (pts[i] + pts[j]) / 2;
-			c.r = (c.c - pts[i]).dist();
-			for (int k = 0; k < j; ++k) if (!c.inCircle(pts[k])) {
-				c = ccCenter(pts[i], pts[j], pts[k]);
-			}
-		}
-	}
-	return c;
-}
-
 template<class P>
 vector<P> convexHull(vector<P> pts) {
 	if (pts.size() <= 1) return pts;
@@ -139,13 +97,13 @@ vector<P> convexHull(vector<P> pts) {
 	return h;
 }
 
-// rotating calipers
-template<class P>
-pair<P, P> hullDiameter(vector<P> pts) {
+// rotating calipers(convex)
+template<class T>
+pair<Point<T>, Point<T>> hullDiameter(vector<Point<T>>& pts) {
 	int n = pts.size();
-	if (n == 0) return {P(0, 0), P(0, 0)};
+	if (n == 0) return {Point<T>(0, 0), Point<T>(0, 0)};
 	if (n == 1) return {pts[0], pts[0]};
-	pair<ll, pair<P, P>> res({0, {pts[0], pts[0]}});
+	pair<T, pair<Point<T>, Point<T>>> res({0, {pts[0], pts[0]}});
 	int j = 1;
 	for (int i = 0; i < j; ++i) {
 		while (true) {
@@ -157,7 +115,7 @@ pair<P, P> hullDiameter(vector<P> pts) {
 	return res.second;
 }
 
-// half plane intersection
+// half plane intersection(convex)
 template<class T>
 vector<Point<T>> hpi(vector<Line<T>> lines) {
 	// intersection of a, b is not part of c's half plane
@@ -174,7 +132,7 @@ vector<Point<T>> hpi(vector<Line<T>> lines) {
 		if (dq.size() < 2 || !bad(dq.back(), lines[i], dq[0])) dq.push_back(lines[i]);
 	}
 	vector<Point<T>> ret;
-	if(dq.size() >= 3) for (int i=0; i < dq.size(); ++i) {
+	if (dq.size() >= 3) for (int i=0; i < dq.size(); ++i) {
 		int j = (i + 1) % dq.size();
 		auto v = dq[i].lineInter(dq[j]);
 		if (v.first == 1) ret.push_back(v.second);
@@ -184,12 +142,30 @@ vector<Point<T>> hpi(vector<Line<T>> lines) {
 
 int main() {
 	ios::sync_with_stdio(0); cin.tie(0);
-	int n; cin >> n;
-	vector<Point<double>> pts(n);
+	int n;
+	cin >> n;
+	vector<Point<ld>> pts(n);
 	for (int i = 0; i < n; ++i) cin >> pts[i].x >> pts[i].y;
-	auto res = mec(pts);
-	cout.precision(3);
+	vector<Line<ld>> lines;
+	for (int i = 0; i < n; ++i) {
+		int j = (i + 1) % n;
+		lines.push_back({pts[i], pts[j]});
+	}
+	ld l = 0, r = 4e7, mid;
+	for (int t = 0; t < 50; ++t) {
+		mid = (l + r) / 2;
+		vector<Line<ld>> nlines = lines;
+		for (auto& i: nlines) i = i.normTrans(mid);
+		auto npts = hpi(nlines);
+		if (npts.empty()) {
+			r = mid;
+			continue;
+		}
+		auto mx = hullDiameter(npts);
+		if ((mx.second - mx.first).dist() > 2 * mid + EPS) l = mid;
+		else r = mid;
+	}
+	cout.precision(4);
 	cout << fixed;
-	cout << res.c.x << ' ' << res.c.y << '\n';
-	cout << res.r;
+	cout << l << "\n";
 }
