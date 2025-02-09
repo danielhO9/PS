@@ -75,83 +75,101 @@ struct Line {
 	}
 };
 
-template<class T>
-T polygonArea2(vector<Point<T>>& pts) {
-	assert(!pts.empty());
-	T ret = pts.back().cross(pts[0]);
-	for (int i = 0; i + 1 < pts.size(); ++i) ret += pts[i].cross(pts[i + 1]);
-	return abs(ret);
-}
+struct Node {
+	ll lMax, rMax, max, sum;
+};
 
-template<class P>
-vector<P> convexHull(vector<P> pts) {
-	if (pts.size() <= 1) return pts;
-	sort(pts.begin(), pts.end());
-	P unit = pts[0];
-	for (auto& i: pts) i = i - unit;
-	sort(next(pts.begin()), pts.end(), [](const P& a, P& b) {
-		if (a.cross(b) == 0) {
-			if (a.x == b.x) return a.y < b.y;
-			return a.x < b.x;
+struct SegmentTree {
+	vector<ll> arr;
+	vector<Node> tree;
+	int sz;
+	inline Node merge(Node l, Node r) {
+		Node ret;
+		ret.lMax = max(l.lMax, l.sum + r.lMax);
+		ret.rMax = max(r.rMax, r.sum + l.rMax);
+		ret.max = max({l.max, r.max, l.rMax + r.lMax});
+		ret.sum = l.sum + r.sum;
+		return ret;
+	}
+	void init(vector<ll>& a) {
+		sz = a.size();
+		arr = a;
+		int h = (int)ceil(log2(sz));
+		int tree_size = (1 << (h + 1));
+		tree = vector<Node>(tree_size);
+		init(1, 0, sz - 1);
+	}
+	void init(int node, int start, int end) {
+		if (start == end) {
+			tree[node] = {arr[start], arr[start], arr[start], arr[start]};
 		}
-		return a.cross(b) > 0;
+		else {
+			init(node * 2, start, (start + end) / 2);
+			init(node * 2 + 1, (start + end) / 2 + 1, end);
+			tree[node] = merge(tree[node * 2], tree[node * 2 + 1]);
+		}
+	}
+	void update(int node, int start, int end, int index, ll val) {
+		if (index < start || index > end) return;
+		if (start == end) {
+			arr[index] = val;
+			tree[node] = {val, val, val, val};
+			return;
+		}
+		update(node * 2, start, (start + end) / 2, index, val);
+		update(node * 2 + 1, (start + end) / 2 + 1, end, index, val);
+		tree[node] = merge(tree[node * 2], tree[node * 2 + 1]);
+	}
+	Node query(int node, int start, int end, int left, int right) {
+		if (left > end || right < start) return {INT32_MIN, INT32_MIN, INT32_MIN, INT32_MIN};
+		if (left <= start && end <= right) return tree[node];
+		Node l = query(node * 2, start, (start + end) / 2, left, right);
+		Node r = query(node * 2 + 1, (start + end) / 2 + 1, end, left, right);
+		return merge(l, r);
+	}
+	void update(int index, ll val) { update(1, 0, sz - 1, index, val); }
+	Node query(int left, int right) { return query(1, 0, sz - 1, left, right); }
+} seg;
+
+struct Nline {
+	int i, j;
+	Line<ll> l;
+};
+
+int main() {
+	ios::sync_with_stdio(0); cin.tie(0);
+	int n; cin >> n;
+	vector<pair<Point<ll>, ll>> pts(n);
+	vector<ll> val(n);
+	for (int i = 0; i < n; ++i) cin >> pts[i].first.x >> pts[i].first.y >> pts[i].second;
+	vector<ll> ord(n);
+	for (int i = 0; i < n; ++i) ord[i] = i;
+	sort(pts.begin(), pts.end(), [](const pair<Point<ll>, ll>& a, const pair<Point<ll>, ll>& b) {
+		if (a.first.y == b.first.y) return a.first.x < b.first.x;
+		return a.first.y < b.first.y;
 	});
-	vector<P> h;
-	h.push_back(pts[0]); h.push_back(pts[1]);
-	for (int i = 2; i < pts.size(); ++i) {
-		while (h.size() >= 2) {
-			P b = h.back(); h.pop_back();
-			P a = h.back();
-			if (a.cross(b, pts[i]) > 0) {
-				h.push_back(b);
-				break;
-			}
+	for (int i = 0; i < n; ++i) val[i] = pts[i].second;
+	seg.init(val);
+	vector<Nline> lines;
+	for (int i = 0; i < n; ++i) for (int j = i + 1; j < n; ++j) lines.push_back({i, j, Line<ll>(pts[i].first, pts[j].first)});
+	sort(lines.begin(), lines.end(), [](const Nline& a, const Nline& b) {
+		if (a.l == b.l) return tie(a.i, a.j) < tie(b.i, b.j);
+		return a.l < b.l;
+	});
+	ll ans = 0;
+	ans = max(ans, seg.query(0, n - 1).max);
+	int j = 0;
+	for (int i = 0; i < lines.size(); i = j) {
+		while (j < lines.size() && (lines[i].l.e - lines[i].l.s).cross(lines[j].l.e - lines[j].l.s) == 0) ++j;
+		for (int k = i; k < j; ++k) {
+			int u = lines[k].i, v = lines[k].j;
+			swap(pts[ord[u]], pts[ord[v]]);
+			swap(val[ord[u]], val[ord[v]]);
+			seg.update(ord[u], val[ord[u]]);
+			seg.update(ord[v], val[ord[v]]);
+			swap(ord[u], ord[v]);
 		}
-		h.push_back(pts[i]);
+		ans = max(ans, seg.query(0, n - 1).max);
 	}
-	for (auto& i: h) i = i + unit;
-	return h;
-}
-
-// rotating calipers(convex)
-template<class T>
-pair<Point<T>, Point<T>> hullDiameter(vector<Point<T>>& pts) {
-	int n = pts.size();
-	if (n == 0) return {Point<T>(0, 0), Point<T>(0, 0)};
-	if (n == 1) return {pts[0], pts[0]};
-	pair<T, pair<Point<T>, Point<T>>> res({0, {pts[0], pts[0]}});
-	int j = 1;
-	for (int i = 0; i < j; ++i) {
-		while (true) {
-			res = max(res, {(pts[i] - pts[j]).dist2(), {pts[i], pts[j]}});
-			if ((pts[(j + 1) % n] - pts[j]).cross(pts[i + 1] - pts[i]) >= 0) break;
-			j = (j + 1) % n;
-		}
-	}
-	return res.second;
-}
-
-// half plane intersection(convex)
-template<class T>
-vector<Point<T>> hpi(vector<Line<T>> lines) {
-	// intersection of a, b is not part of c's half plane
-	auto bad = [&](Line<T>& a, Line<T>& b, Line<T>& c) {
-		auto v = a.lineInter(b);
-		if (v.first != 1) return false;
-		return c.s.cross(c.e, v.second) <= EPS;
-	};
-	sort(lines.begin(), lines.end());
-	deque<Line<T>> dq;
-	for (int i = 0; i < lines.size(); ++i) {
-		while(dq.size() >= 2 && bad(dq[(int) dq.size() - 2], dq.back(), lines[i])) dq.pop_back();
-		while(dq.size() >= 2 && bad(dq[0], dq[1], lines[i])) dq.pop_front();
-		if (dq.size() < 2 || !bad(dq.back(), lines[i], dq[0])) dq.push_back(lines[i]);
-	}
-	vector<Point<T>> ret;
-	if (dq.size() >= 3) for (int i = 0; i < dq.size(); ++i) {
-		int j = (i + 1) % dq.size();
-		auto v = dq[i].lineInter(dq[j]);
-		if (v.first == 1) ret.push_back(v.second);
-	}
-	return ret;
+	cout << ans;
 }

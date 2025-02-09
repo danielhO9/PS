@@ -83,75 +83,60 @@ T polygonArea2(vector<Point<T>>& pts) {
 	return abs(ret);
 }
 
-template<class P>
-vector<P> convexHull(vector<P> pts) {
-	if (pts.size() <= 1) return pts;
-	sort(pts.begin(), pts.end());
-	P unit = pts[0];
-	for (auto& i: pts) i = i - unit;
-	sort(next(pts.begin()), pts.end(), [](const P& a, P& b) {
-		if (a.cross(b) == 0) {
-			if (a.x == b.x) return a.y < b.y;
-			return a.x < b.x;
-		}
-		return a.cross(b) > 0;
+struct Nline {
+	int i, j;
+	Line<ll> l;
+};
+
+int n;
+Point<ll> pts[2000];
+int ord[2000];
+
+void solve() {
+	for (int i = 0; i < n; ++i) cin >> pts[i].x >> pts[i].y;
+	for (int i = 0; i < n; ++i) ord[i] = i;
+	sort(pts, pts + n, [](const Point<ll>& a, const Point<ll>& b) {
+		if (a.y == b.y) return a.x < b.x;
+		return a.y < b.y;
 	});
-	vector<P> h;
-	h.push_back(pts[0]); h.push_back(pts[1]);
-	for (int i = 2; i < pts.size(); ++i) {
-		while (h.size() >= 2) {
-			P b = h.back(); h.pop_back();
-			P a = h.back();
-			if (a.cross(b, pts[i]) > 0) {
-				h.push_back(b);
-				break;
+	vector<Nline> lines;
+	for (int i = 0; i < n; ++i) for (int j = i + 1; j < n; ++j) lines.push_back({i, j, Line<ll>(pts[i], pts[j])});
+	sort(lines.begin(), lines.end(), [](const Nline& a, const Nline& b) {
+		if (a.l == b.l) return tie(a.i, a.j) < tie(b.i, b.j);
+		return a.l < b.l;
+	});
+	ll mn = LLONG_MAX, mx = LLONG_MIN;
+	int j = 0;
+	for (int i = 0; i < lines.size(); i = j) {
+		while (j < lines.size() && (lines[i].l.e - lines[i].l.s).cross(lines[j].l.e - lines[j].l.s) == 0) ++j;
+		for (int k = i; k < j; ++k) {
+			int u = lines[k].i, v = lines[k].j;
+			swap(ord[u], ord[v]);
+			swap(pts[ord[u]], pts[ord[v]]);
+			if (ord[u] > ord[v]) swap(u, v);
+			if (ord[u] - 1 >= 0) {
+				vector<Point<ll>> tmp = {pts[ord[u]], pts[ord[v]], pts[ord[u] - 1]};
+				mn = min(mn, polygonArea2(tmp));
+				tmp = {pts[ord[u]], pts[ord[v]], pts[0]};
+				mx = max(mx, polygonArea2(tmp));
+			}
+			if (ord[v] + 1 < n) {
+				vector<Point<ll>> tmp = {pts[ord[u]], pts[ord[v]], pts[ord[v] + 1]};
+				mn = min(mn, polygonArea2(tmp));
+				tmp = {pts[ord[u]], pts[ord[v]], pts[n - 1]};
+				mx = max(mx, polygonArea2(tmp));
 			}
 		}
-		h.push_back(pts[i]);
 	}
-	for (auto& i: h) i = i + unit;
-	return h;
+	cout << mn / 2 << '.' << mn % 2 * 5 << ' ';
+	cout << mx / 2 << '.' << mx % 2 * 5 << '\n';
 }
 
-// rotating calipers(convex)
-template<class T>
-pair<Point<T>, Point<T>> hullDiameter(vector<Point<T>>& pts) {
-	int n = pts.size();
-	if (n == 0) return {Point<T>(0, 0), Point<T>(0, 0)};
-	if (n == 1) return {pts[0], pts[0]};
-	pair<T, pair<Point<T>, Point<T>>> res({0, {pts[0], pts[0]}});
-	int j = 1;
-	for (int i = 0; i < j; ++i) {
-		while (true) {
-			res = max(res, {(pts[i] - pts[j]).dist2(), {pts[i], pts[j]}});
-			if ((pts[(j + 1) % n] - pts[j]).cross(pts[i + 1] - pts[i]) >= 0) break;
-			j = (j + 1) % n;
-		}
+int main() {
+	ios::sync_with_stdio(0); cin.tie(0);
+	while (true) {
+		cin >> n;
+		if (n == 0) break;
+		solve();
 	}
-	return res.second;
-}
-
-// half plane intersection(convex)
-template<class T>
-vector<Point<T>> hpi(vector<Line<T>> lines) {
-	// intersection of a, b is not part of c's half plane
-	auto bad = [&](Line<T>& a, Line<T>& b, Line<T>& c) {
-		auto v = a.lineInter(b);
-		if (v.first != 1) return false;
-		return c.s.cross(c.e, v.second) <= EPS;
-	};
-	sort(lines.begin(), lines.end());
-	deque<Line<T>> dq;
-	for (int i = 0; i < lines.size(); ++i) {
-		while(dq.size() >= 2 && bad(dq[(int) dq.size() - 2], dq.back(), lines[i])) dq.pop_back();
-		while(dq.size() >= 2 && bad(dq[0], dq[1], lines[i])) dq.pop_front();
-		if (dq.size() < 2 || !bad(dq.back(), lines[i], dq[0])) dq.push_back(lines[i]);
-	}
-	vector<Point<T>> ret;
-	if (dq.size() >= 3) for (int i = 0; i < dq.size(); ++i) {
-		int j = (i + 1) % dq.size();
-		auto v = dq[i].lineInter(dq[j]);
-		if (v.first == 1) ret.push_back(v.second);
-	}
-	return ret;
 }
