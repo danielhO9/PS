@@ -1,9 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;
-typedef long double ld;
 
-const ld EPS = 1e-9;
+const double EPS = 1e-9;
 
 template<class T>
 struct Point {
@@ -40,7 +39,7 @@ Circle<T> ccCenter(const Point<T>& a, const Point<T>& b, const Point<T>& c) {
 	Point<T> nb = c - a, nc = b - a;
 	Point<T> na = a;
 	Point<T> center = na + (nb * nc.dist2() - nc * nb.dist2()).perp() / nb.cross(nc) / 2;
-	T r = (b - a).dist() * (c - b).dist() * (a - c).dist() / (double) abs((b - a).cross(c - a)) / 2.0;
+	T r = (b - a).dist() * (c - b).dist() * (a - c).dist() / (long double) abs((b - a).cross(c - a)) / 2.0;
 	return {center, r};
 }
 

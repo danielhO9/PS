@@ -1,9 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;
-typedef long double ld;
 
-const ld EPS = 1e-9;
+const double EPS = 1e-9;
 
 template<class T>
 struct Point {
@@ -43,7 +42,8 @@ struct Line {
 	}
 	Line operator+ (Point<T> p) const { return {s + p, e + p}; }
 	Line operator- (Point<T> p) const { return {s - p, e - p}; }
-	bool onSegment(Point<T> p) const { return abs(p.cross(s, e)) == 0 && (s - p).dot(e - p) <= 0; }
+	bool onSegment(Point<ll> p) const { return abs(p.cross(s, e)) == 0 && (s - p).dot(e - p) <= 0; }
+	bool onSegment(Point<double> p) const { return abs(p.cross(s, e)) < EPS && (s - p).dot(e - p) <= EPS; }
 	Line normTrans(T x) const { return *this + (e - s).normal() * x; }
 	double lineDist(Point<T> p) const { return (double)(e - s).cross(p - s) / (e - s).dist(); }
 	double segDist(Point<T> p) const {
