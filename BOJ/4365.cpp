@@ -1,15 +1,44 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int main() {
-	ios::sync_with_stdio(0); cin.tie(0);
+vector<int> cur;
 
+string toCard(int x) {
+	string ret;
+	if (x % 13 <= 8) ret += to_string(x - 2);
+	else if (x == 9) ret += "Jack";
+	else if (x == 10) ret += "Queen";
+	else if (x == 11) ret += "King";
+	else ret += "Ace";
+	ret += " of ";
+	if (x / 13 == 0) ret += "Clubs";
+	else if (x / 13 == 1) ret += "Diamonds";
+	else if (x / 13 == 2) ret += "Hearts";
+	else ret += "Spades";
+	return ret; 
 }
 
-/*
-2
-2 1 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 52 51
-52 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 1
-1
-2
-*/
+void read() {
+	for (auto i: cur) cout << toCard(i) << '\n';
+	cout << '\n';
+}
+
+int n;
+
+int main() {
+	ios::sync_with_stdio(0); cin.tie(0);
+	cin >> n;
+	for (int i = 0; i < 52; ++i) cur.push_back(i);
+	int q[52][n];
+	for (int i = 0; i < n; ++i) for (int j = 0; j < 52; ++j) {
+		cin >> q[i][j];
+		--q[i][j];
+	}
+	int k;
+	while (cin >> k) {
+		--k;
+		vector<int> ncur(52);
+		for (int i = 0; i < 52; ++i) ncur[i] = cur[q[i][k]];
+		cur = ncur;
+	}
+}
