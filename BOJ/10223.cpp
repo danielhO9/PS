@@ -51,3 +51,40 @@ struct SegmentTree {
 
 	ll query(int left, int right) { return query(1, 0, sz - 1, left, right); }
 } seg;
+
+ll N, D, s, a, b;
+
+void solve() {
+	cin >> N >> D >> s >> a >> b;
+	vector<ll> arr(N); seg.init(arr);
+	ll sidx = 0;
+	ll ans = 0;
+	ll C, K;
+	for (ll i = 1; i <= D; ++i) {
+		C = s % N + 1;
+		s = (s * a + b) % 1000000007;
+		K = s % N + 1;
+		s = (s * a + b) % 1000000007;
+		ll mx = N - sidx;
+		if (C > 0) {
+			seg.update(sidx, i);
+			if (sidx + min(mx, C) < N) seg.update(sidx + min(mx, C), -i);
+			if (mx < C) {
+				seg.update(0, i);
+				if (C - mx < N) seg.update(C - mx, -i);
+				sidx = C - mx;
+			} else {
+				sidx = sidx + min(mx, C);
+			}
+		}
+		--K;
+		ans += seg.query(0, (sidx + K) % N);
+	}
+	cout << ans << '\n';
+}
+
+int main() {
+	ios::sync_with_stdio(0); cin.tie(0);
+	int t; cin >> t;
+	while (t--) solve();
+}
