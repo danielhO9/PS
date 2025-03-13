@@ -1,44 +1,48 @@
 #include <bits/stdc++.h>
 using namespace std;
-vector<int> sz(10001);
-vector<vector<int>> graph(10001);
-vector<bool> cent(10001, false);
-int N;
+typedef long long ll;
+
+const int N = 10001; // modify
+
+bool vis[N];
+int sz[N];
+vector<int> adj[N];
 
 int getSize(int v, int p) {
-    sz[v] = 1;
-    for (auto i : graph[v]) if(i != p) sz[v] += getSize(i, v);
-    return sz[v];
+    int& ret = sz[v]; ret = 1;
+    for (auto u: adj[v]) if (u != p && !vis[u]) ret += getSize(u, v);
+    return ret;
 }
 
-void getCent(int v, int p) {
-    int sum = N - 1; bool avail = true;
-    for(auto i : graph[v]) {
-        if (i != p && sz[i] * 2 > N) {
-            avail = false; break;
-        } else if (i != p && sz[i] * 2 <= N) {
-            sum -= sz[i];
-        }
+void getCent(int v, int p, int nsz, vector<int>& ret) {
+    int psz = nsz - 1;
+    bool flag = true;
+    for (auto u: adj[v]) if (u != p && !vis[u]) {
+        if (sz[u] * 2 >= nsz) getCent(u, v, nsz, ret);
+        if (sz[u] * 2 > nsz) flag = false;
+        psz -= sz[u];
     }
-    if (avail && sum * 2 <= N) cent[v] = true;
-    for (auto i: graph[v]) {
-        if (i != p) getCent(i, v);
-    }
+    if (flag && psz * 2 <= nsz) ret.push_back(v);
 }
+
+vector<int> centroid(int v, int p) {
+    getSize(v, p); int nsz = sz[v];
+    vector<int> ret;
+    getCent(v, p, nsz, ret);
+    return ret;
+}
+
 
 int main() {
     ios::sync_with_stdio(0); cin.tie(0);
-    cin >> N;
-    int x, y;
-    for (int i = 0; i < N - 1; ++i) {
-        cin >> x >> y;
-        graph[x].push_back(y);
-        graph[y].push_back(x);
+    int n; cin >> n;
+    for (int i = 0; i < n - 1; ++i) {
+        int u, v; cin >> u >> v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
     }
-    getSize(1, 0);
-    getCent(1, 0);
-    for (int i = 1; i <= N; ++i) {
-        if (cent[i]) cout << i << "\n";
-    }
-    return 0;
+    auto ans = centroid(1, 0);
+    sort(ans.begin(), ans.end());
+    for (auto i: ans) cout << i << ' ';
+    
 }

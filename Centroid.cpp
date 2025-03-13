@@ -2,47 +2,40 @@
 using namespace std;
 typedef long long ll;
 
-struct Vertex {
-	int e; ll w;
-};
+const int N = 500001; // modify
+bool vis[N];
+int sz[N];
+vector<pair<int, ll>> adj[N];
 
-vector<vector<Vertex>> adj;
-vector<int> sz;
-vector<bool> vis;
-
-int getSize(int v, int p){
-    sz[v] = 1;
-    for(auto i: adj[v]) if (i.e != p && !vis[i.e]) sz[v] += getSize(i.e, v);
-    return sz[v];
+int getSize(int v, int p) {
+    int& ret = sz[v]; ret = 1;
+    for (auto [u, _]: adj[v]) if (u != p && !vis[u]) ret += getSize(u, v);
+    return ret;
 }
 
-int getCent(int v, int p, int& sub){
-    for(auto i: adj[v]) if (i.e != p && !vis[i.e] && sz[i.e] * 2 > sub) return getCent(i.e, v, sub);
-    return v;
+void getCent(int v, int p, int nsz, vector<int>& ret) {
+    int psz = nsz - 1;
+    bool flag = true;
+    for (auto [u, _]: adj[v]) if (u != p && !vis[u]) {
+        if (sz[u] * 2 >= nsz) getCent(u, v, nsz, ret);
+        if (sz[u] * 2 > nsz) flag = false;
+        psz -= sz[u];
+    }
+    if (flag && psz * 2 <= nsz) ret.push_back(v);
 }
 
-int centroid(int v, int p) {
-    getSize(v, p); int sub = sz[v]; 
-	return getCent(v, p, sub);
+vector<int> centroid(int v, int p) {
+    getSize(v, p); int nsz = sz[v];
+    vector<int> ret;
+    getCent(v, p, nsz, ret);
+    return ret;
 }
 
-ll dnc(int v) {
-    getSize(v, -1); int csz = sz[v];
-	int cent = getCent(v, -1, csz); vis[cent] = true;
-
-	ll ret = 0;
+int dnc(int v) {
+    int ret = 0.0;
+	int c = centroid(v, -1)[0]; vis[c] = true;
 	// compute
 
-    for (auto i: adj[cent]) if (!vis[i.e]) ret += dnc(i.e);
-	return ret;
-}
-
-void solve() {
-	int MAX_N;
-	adj.resize(MAX_N);
-	sz.resize(MAX_N);
-	vis = vector<bool>(MAX_N, false);
-
-	int src = 1;
-	dnc(src);
+    for (auto [u, _]: adj[c]) if (!vis[u]) ret = max(dnc(u), ret);
+    return ret;
 }
