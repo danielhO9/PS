@@ -99,6 +99,27 @@ void gauss_elim(Matrix<T>& A) {
 }
 
 template<class T>
+int rank(Matrix<T>& A) {
+    int r = 0;
+    for (int j = 0; j < A.m && r < A.n; j++) {
+        for (int i = r; i < A.n; i++) {
+            if (A[{i, j}] != 0) {
+                A.rswap(r, i);
+                break;
+            }
+        }
+        if (A[{r, j}] != 0) {
+            A.rmul(r, 1 / A[{r, j}]);
+            for (int i = r + 1; i < A.n; i++) {
+                A.radd(i, r, -A[{i, j}]);
+            }
+            r++;
+        }
+    }
+    return r;
+};
+
+template<class T>
 void rref(Matrix<T>& A) {
     for (int j = 0, r = 0; j < A.n && r < A.m; ++j) {
         for (int i = r; i < A.m; i++) {
@@ -204,10 +225,10 @@ Matrix<T> inv(const Matrix<T>& A) {
     return X;
 }
 
-const int sz = 60;
 void rref(vector<ll>& A) {
 	if (A.empty()) return;
     int m = A.size();
+    int sz = 60;
     for (int j = sz - 1, r = 0; j >= 0 && r < m; --j) {
         for (int i = r; i < m; i++) {
             if ((A[i] >> j) & 1) {
