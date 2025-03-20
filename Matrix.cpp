@@ -99,7 +99,7 @@ void gauss_elim(Matrix<T>& A) {
 }
 
 template<class T>
-int rank(Matrix<T>& A) {
+int matRank(Matrix<T>& A) {
     int r = 0;
     for (int j = 0; j < A.m && r < A.n; j++) {
         for (int i = r; i < A.n; i++) {
