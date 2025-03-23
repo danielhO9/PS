@@ -171,7 +171,7 @@ T det(Matrix<T>& A) {
 template<class T>
 Matrix<T> operator * (const Matrix<T>& A, const Matrix<T>& B) {
     assert(A.n == B.m);
-    matrix<T> C(A.m, B.n);
+    Matrix<T> C(A.m, B.n);
     for (int i = 0; i < C.m; ++i) {
         for (int k = 0; k < A.n; ++k) {
             for (int j = 0; j < C.n; ++j) {
