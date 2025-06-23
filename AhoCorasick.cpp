@@ -1,21 +1,24 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+const int ALPHABETS = 26;
+int toNumber(char ch) { return ch - 'A'; };
+
 struct TrieNode {
-	unordered_map<char, TrieNode*> children;
+	TrieNode* children[ALPHABETS];
 	TrieNode* failure;
 	bool terminal;
 	TrieNode(): terminal(false) {
-		
+		memset(children, 0, sizeof(children));
 	}
 	~TrieNode() {
-		for (auto [i, _]: children) delete children[i];
+		for (int i = 0; i < ALPHABETS; ++i) if (children[i]) delete children[i];
 	}
 	void insert(const char* key) {
 		if (*key == 0) terminal = true;
 		else {
-			char next = *key;
-			if (children.find(next) == children.end()) children[next] = new TrieNode();
+			int next = toNumber(*key);
+			if (children[next] == NULL) children[next] = new TrieNode();
 			children[next]->insert(key + 1);
 		}
 	}
@@ -24,16 +27,17 @@ struct TrieNode {
 void getFailure(TrieNode* trie) {
 	queue<TrieNode*> Q;
 	trie->failure = trie;
-	for (auto [_, there]: trie->children) {
-		there->failure = trie;
-		Q.push(there);
+	for (int i = 0; i < ALPHABETS; ++i) if (trie->children[i]) {
+		trie->children[i]->failure = trie;
+		Q.push(trie->children[i]);
 	}
 	while(!Q.empty()) {
 		TrieNode* here = Q.front(); Q.pop();
-		for (auto [i, there]: here->children) {
+		for (int i = 0; i < ALPHABETS; ++i) if (here->children[i]) {
+			TrieNode* there = here->children[i];
 			TrieNode* p = here->failure;
-			while (p != trie && p->children.find(i) == p->children.end()) p = p->failure;
-			if (p->children.find(i) != p->children.end()) p = p->children[i];
+			while (p != trie && p->children[i] == NULL) p = p->failure;
+			if (p->children[i]) p = p->children[i];
 			else p = trie;
 			there->failure = p;
 			if (p->terminal) there->terminal = true;
@@ -46,8 +50,9 @@ void getFailure(TrieNode* trie) {
 bool query(string& s, TrieNode* trie) {
 	TrieNode* p = trie;
 	for (auto& i: s) {
-		while (p != trie && p->children.find(i) == p->children.end()) p = p->failure;
-		if (p->children.find(i) != p->children.end()) p = p->children[i];
+		int next = toNumber(i);
+		while (p != trie && p->children[next] == NULL) p = p->failure;
+		if (p->children[next]) p = p->children[next];
 		else p = trie;
 		if (p->terminal) return true;
 	}

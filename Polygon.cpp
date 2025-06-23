@@ -4,7 +4,7 @@ typedef long long ll;
 
 const double EPS = 1e-9;
 
-template<class T>
+template<typename T>
 struct Point {
 	T x, y;
 	explicit Point(T x = 0, T y = 0) : x(x), y(y) {}
@@ -35,7 +35,7 @@ struct Line {
 		auto sinPos = [&](Line l) { return l.s.y == l.e.y ? l.s.x <= l.e.x : l.s.y <= l.e.y; }; // angle in [0, pi)
 		return sinPos(*this) != sinPos(l) ? sinPos(*this) > sinPos(l) : (e - s).cross(l.e - l.s) >= 0;
 	}
-	// only direction, not setment
+	// only direction, not segment
 	bool operator== (Line l) const {
 		auto sinPos = [&](Line l) { return l.s.y == l.e.y ? l.s.x <= l.e.x : l.s.y <= l.e.y; }; // angle in [0, pi)
 		return sinPos(*this) == sinPos(l) && (e - s).cross(l.e - l.s) == 0;
@@ -75,7 +75,7 @@ struct Line {
 	}
 };
 
-template<class T>
+template<typename T>
 T polygonArea2(vector<Point<T>>& pts) {
 	assert(!pts.empty());
 	T ret = pts.back().cross(pts[0]);
@@ -83,7 +83,7 @@ T polygonArea2(vector<Point<T>>& pts) {
 	return abs(ret);
 }
 
-template<class P>
+template<typename P>
 vector<P> convexHull(vector<P> pts) {
 	if (pts.size() <= 1) return pts;
 	sort(pts.begin(), pts.end());
@@ -114,7 +114,7 @@ vector<P> convexHull(vector<P> pts) {
 }
 
 // rotating calipers(convex)
-template<class T>
+template<typename T>
 pair<Point<T>, Point<T>> hullDiameter(vector<Point<T>>& pts) {
 	int n = pts.size();
 	if (n == 0) return {Point<T>(0, 0), Point<T>(0, 0)};
@@ -132,7 +132,7 @@ pair<Point<T>, Point<T>> hullDiameter(vector<Point<T>>& pts) {
 }
 
 // half plane intersection(convex)
-template<class T>
+template<typename T>
 vector<Point<T>> hpi(vector<Line<T>> lines) {
 	// intersection of a, b is not part of c's half plane
 	auto bad = [&](Line<T>& a, Line<T>& b, Line<T>& c) {

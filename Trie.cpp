@@ -1,41 +1,51 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+const int ALPHABETS = 26;
+int toNumber(char ch) { return ch - 'A'; };
+
 struct TrieNode {
-	unordered_map<char, TrieNode*> children;
+	TrieNode* children[ALPHABETS];
 	bool terminal;
 	TrieNode(): terminal(false) {
-		
+		memset(children, 0, sizeof(children));
 	}
 	~TrieNode() {
-		for (auto [i, _]: children) delete children[i];
+		for (int i = 0; i < ALPHABETS; ++i) if (children[i]) delete children[i];
 	}
 	void insert(const char* key) {
 		if (*key == 0) terminal = true;
 		else {
-			char next = *key;
-			if (children.find(next) == children.end()) children[next] = new TrieNode();
+			int next = toNumber(*key);
+			if (children[next] == NULL) children[next] = new TrieNode();
 			children[next]->insert(key + 1);
 		}
 	}
 	bool find(const char* key) {
 		if (*key == 0) return this->terminal;
-		char next = *key;
-		if (children.find(next) == children.end()) return false;
+		int next = toNumber(*key);
+		if (children[next] == NULL) return false;
 		return children[next]->find(key + 1);
 	}
 	bool remove(const char* key) {
 		bool flag = true;
 		if (*key == 0) {
 			this->terminal = false;
-			if (!children.empty()) flag = false;
+			for (int i = 0; i < ALPHABETS; ++i) if (children[i]) {
+				flag = false;
+				break;
+			}
 			return flag;
 		}
 		if (this->terminal) return false;
-		char next = *key;
+		int next = toNumber(*key);
 		if (children[next]->remove(key + 1)) {
-			delete children[next]; children.erase(next);
-			for (auto [_, i]: children) flag = false;
+			delete children[next];
+			children[next] = NULL;
+			for (int i = 0; i < ALPHABETS; ++i) if (children[i]) {
+				flag = false;
+				break;
+			}
 			return flag;
 		} else return false;
 	}

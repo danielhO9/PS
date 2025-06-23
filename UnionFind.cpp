@@ -1,14 +1,15 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+// 0-index
 struct UF {
-	int sz;
-	vector<int> par;
+	vector<int> par, sz;
 
 	void init(int _sz) {
-		sz = _sz;
-		par.resize(sz);
-		for (int i = 0; i < sz; ++i) par[i] = i;
+		par.resize(_sz);
+		sz.resize(_sz);
+		for (int i = 0; i < _sz; ++i) par[i] = i;
+		for (int i = 0; i < _sz; ++i) sz[i] = 1;
 	}
 
 	int find(int x) {
@@ -19,6 +20,9 @@ struct UF {
 
 	void union_path(int x, int y) {
 		x = find(x); y = find(y);
+		if (x == y) return;
+		if (sz[x] > sz[y]) swap(x, y);
 		par[x] = y;
+		sz[y] += sz[x];
 	}
 };
