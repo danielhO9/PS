@@ -2,95 +2,65 @@
 using namespace std;
 
 const int ALPHABETS = 2;
-int toNumber(char ch) { return ch - '0'; };
 
 struct TrieNode {
 	TrieNode* children[ALPHABETS];
-	bool terminal;
-	TrieNode(): terminal(false) {
-		memset(children, 0, sizeof(children));
-	}
-	~TrieNode() {
-		for (int i = 0; i < ALPHABETS; ++i) if (children[i]) delete children[i];
-	}
-	void insert(const char* key) {
-		if (*key == 0) terminal = true;
+	int terminal;
+
+	TrieNode(): terminal(0) { memset(children, 0, sizeof(children)); }
+	~TrieNode() { for (int i = 0; i < ALPHABETS; ++i) if (children[i]) delete children[i]; }
+	void insert(const int& s, int idx = 29) {
+		if (idx == -1) ++terminal;
 		else {
-			int next = toNumber(*key);
-			if (children[next] == NULL) children[next] = new TrieNode();
-			children[next]->insert(key + 1);
+			int next = ((s >> idx) & 1);
+			if (children[next] == nullptr) children[next] = new TrieNode();
+			children[next]->insert(s, idx - 1);
 		}
 	}
-	bool find(const char* key) {
-		if (*key == 0) return this->terminal;
-		int next = toNumber(*key);
-		if (children[next] == NULL) return false;
-		return children[next]->find(key + 1);
+	bool find(const int& s, int idx = 29) {
+		if (idx == -1) return this->terminal;
+		int next = ((s >> idx) & 1);
+		if (children[next] == nullptr) return false;
+		return children[next]->find(s, idx - 1);
 	}
-	bool remove(const char* key) {
-		bool flag = true;
-		if (*key == 0) {
-			this->terminal = false;
-			for (int i = 0; i < ALPHABETS; ++i) if (children[i]) {
-				flag = false;
-				break;
-			}
-			return flag;
+	bool erase(const int& s, int idx = 29) {
+		if (idx == -1) {
+			--terminal;
+			if (terminal) return false;
+			for (int i = 0; i < ALPHABETS; ++i) if (children[i]) return false;
+			return true;
 		}
-		if (this->terminal) return false;
-		int next = toNumber(*key);
-		if (children[next]->remove(key + 1)) {
+		int next = ((s >> idx) & 1);
+		if (children[next] == nullptr) return false;
+		if (children[next]->erase(s, idx - 1)) {
 			delete children[next];
-			children[next] = NULL;
-			for (int i = 0; i < ALPHABETS; ++i) if (children[i]) {
-				flag = false;
-				break;
-			}
-			return flag;
-		} else return false;
-	}
-	int query(const char* key, int dep) {
-		if (*key == 0) return 0;
-		int next = toNumber(*key);
-		int rev = 1 - next;
-		int ret = 0;
-		if (children[rev]) {
-			ret += (1 << dep);
-			// cout << dep << ' ' << rev << '\n';
-			ret += children[rev]->query(key + 1, dep - 1);
-		} else if (children[next]) {
-			// cout << dep << ' ' << next << '\n';
-			ret += children[next]->query(key + 1, dep - 1);
+			children[next] = nullptr;
 		}
-		return ret;
+		if (terminal) return false;
+		for (int i = 0; i < ALPHABETS; ++i) if (children[i]) return false;
+		return true;
+	}
+	int query(const int& s, int idx = 29, int cur = 0) {
+		if (idx == -1) return cur;
+		int next = ((s >> idx) & 1);
+		next ^= 1;
+		if (children[next] == nullptr) next ^= 1;
+		else cur += (1 << idx);
+		return children[next]->query(s, idx - 1, cur);
 	}
 };
 
-void solve() {
-	TrieNode* trie = new TrieNode();
-	int M; cin >> M;
-	unordered_map<int, int> um; um[0] = 1;
-	char bit[31]; for (int i = 0; i < 30; ++i) bit[i] = '0';
-	trie->insert(bit);
-	while (M--) {
-		int what, x; cin >> what >> x;
-		for (int i = 0; i < 30; ++i) {
-			if ((x >> i) & 1) bit[29 - i] = '1';
-			else bit[29 - i] = '0';
-		}
-		if (what == 1) {
-			++um[x];
-			if (um[x] == 1) trie->insert(bit);
-		} else if (what == 2) {
-			--um[x];
-			if (um[x] == 0) trie->remove(bit);
-		} else {
-			cout << trie->query(bit, 29) << '\n';
-		}
-	}
-}
+int M;
 
 int main() {
 	ios::sync_with_stdio(0); cin.tie(0);
-	solve();
+	cin >> M;
+	TrieNode* trie = new TrieNode{};
+	trie->insert(0);
+	while (M--) {
+		int t, x; cin >> t >> x;
+		if (t == 1) trie->insert(x);
+		else if (t == 2) trie->erase(x);
+		else cout << trie->query(x) << '\n';
+	}
 }
