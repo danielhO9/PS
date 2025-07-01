@@ -30,8 +30,8 @@ struct SegmentTree {
 	void update(int node, int start, int end, int index, ll val) {
 		if (index < start || index > end) return;
 		if (start == end) {
-			arr[index] = val;
-			tree[node] = val;
+			arr[index] += val;
+			tree[node] += val;
 			return;
 		}
 		int mid = (start + end) / 2;
@@ -50,25 +50,3 @@ struct SegmentTree {
 	void update(int index, ll val) { update(1, 0, sz - 1, index, val); }
 	ll query(int left, int right) { return query(1, 0, sz - 1, left, right); }
 };
-
-void solve() {
-	int N, M, K; cin >> N >> M >> K;
-	vector<ll> a(N); for (int i = 0; i < N; ++i) cin >> a[i];
-	SegmentTree seg {a};
-	M += K;
-	while (M--) {
-		ll a, b, c; cin >> a >> b >> c;
-		if (a == 1) {
-			--b;
-			seg.update(b, c);
-		} else {
-			--b; --c;
-			cout << seg.query(b, c) << '\n';
-		}
-	}
-}
-
-int main() {
-	ios::sync_with_stdio(0); cin.tie(0);
-	solve();
-}
