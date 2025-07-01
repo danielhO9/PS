@@ -56,22 +56,3 @@ struct LCA {
         return dis[u] + dis[v] - dis[l] * 2;
     }
 };
-
-int N, M;
-
-int main() {
-	ios::sync_with_stdio(0); cin.tie(0);
-	cin >> N;
-	for (int i = 0; i < N - 1; ++i) {
-		int u, v; cin >> u >> v;
-		adj[u].push_back(make_pair(v, 1));
-		adj[v].push_back(make_pair(u, 1));
-	}
-	LCA lca;
-	cin >> M;
-	while (M--) {
-		int u, v; cin >> u >> v;
-		cout << lca.lca(u, v) << '\n';
-	}
-
-}
