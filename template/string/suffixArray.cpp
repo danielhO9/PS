@@ -68,14 +68,3 @@ vector<int> getLcp(const string& s, const vector<int>& sfx) {
 	}
 	return lcp;
 }
-
-int main() {
-	ios::sync_with_stdio(0); cin.tie(0);
-	string s; cin >> s;
-	vector<int> sfx = getSuffixArray(s);
-	vector<int> lcp = getLcp(s, sfx);
-	for (int i = 0; i < s.size(); ++i) cout << sfx[i] + 1 << ' ';
-	cout << '\n';
-	cout << "x ";
-	for (int i = 1; i < s.size(); ++i) cout << lcp[i] << ' ';
-}

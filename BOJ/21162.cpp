@@ -38,9 +38,9 @@ bool radixSort(vector<int>& rk, int k) {
     return true;
 }
 
-vector<int> getSuffixArray(const string& s) {
+vector<int> getSuffixArray(const vector<int>& s) {
     const int n = s.size();
-    const int m = 255;
+    const int m = 200001;
     vector<int> cnt(m);
     for (auto i: s) cnt[i] = 1;
     for (int i = 1; i < m; ++i) cnt[i] += cnt[i - 1];
@@ -55,27 +55,26 @@ vector<int> getSuffixArray(const string& s) {
     return sfx;
 }
 
-vector<int> getLcp(const string& s, const vector<int>& sfx) {
-	const int n = s.size();
-	vector<int> inv(n), lcp(n);
-	for (int i = 0; i < n; ++i) inv[sfx[i]] = i;
-	int h = 0;
-	for(int i = 0; i < n; ++i) if (inv[i]) {
-		int prv = sfx[inv[i] - 1];
-		while (s[prv + h] == s[i + h]) ++h;
-		lcp[inv[i]] = h;
-		h = max(h - 1, 0);
-	}
-	return lcp;
+int N, K;
+
+void solve() {
+    cin >> N >> K;
+	vector<int> S(N);
+    for (int i = 0; i < N; ++i) cin >> S[i];
+    reverse(S.begin(), S.end());
+    vector<int> SS(2 * N);
+    for (int i = 0; i < 2 * N; ++i) SS[i] = S[i % N];
+	vector<int> sfx = getSuffixArray(SS);
+    for (auto i: sfx) if (1 <= i && i < N) {
+        --K;
+        if (K == 0) {
+            for (int j = 0; j < N; ++j) cout << SS[i + j] << ' ';
+            return;
+        }
+    }
 }
 
 int main() {
-	ios::sync_with_stdio(0); cin.tie(0);
-	string s; cin >> s;
-	vector<int> sfx = getSuffixArray(s);
-	vector<int> lcp = getLcp(s, sfx);
-	for (int i = 0; i < s.size(); ++i) cout << sfx[i] + 1 << ' ';
-	cout << '\n';
-	cout << "x ";
-	for (int i = 1; i < s.size(); ++i) cout << lcp[i] << ' ';
+    ios::sync_with_stdio(0); cin.tie(0);
+    solve();
 }

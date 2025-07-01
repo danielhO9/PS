@@ -59,25 +59,3 @@ bool query(string& s, TrieNode* trie) {
 	}
 	return false;
 }
-
-void solve() {
-	TrieNode* trie = new TrieNode();
-	int N; cin >> N;
-	for (int i = 0; i < N; ++i) {
-		string s; cin >> s;
-		trie->insert(s.c_str());
-	}
-	getFailure(trie);
-	int Q; cin >> Q;
-	while (Q--) {
-		string s; cin >> s;
-		if (query(s, trie)) cout << "YES\n";
-		else cout << "NO\n";
-	}
-	delete trie;
-}
-
-int main() {
-	ios::sync_with_stdio(0); cin.tie(0);
-	solve();
-}
