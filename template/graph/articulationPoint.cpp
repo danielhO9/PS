@@ -32,17 +32,3 @@ vector<int> getPoint(int V) {
 	for (int i = 1; i < V; ++i) if (!ord[i]) dfs(ret, i, 0);
 	return ret;
 }
-
-int main() {
-	ios::sync_with_stdio(0); cin.tie(0);
-	int V, E; cin >> V >> E;
-	while (E--) {
-		int a, b; cin >> a >> b;
-		adj[a].push_back(b);
-		adj[b].push_back(a);
-	}
-	auto ans = getPoint(V + 1);
-	cout << ans.size() << '\n';
-	sort(ans.begin(), ans.end());
-	for (auto i: ans) cout << i << ' ';
-}
