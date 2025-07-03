@@ -10,7 +10,6 @@ int cnt = 0;
 void dfs(vector<pair<int, int>>& ret, int v, int p) {
     ord[v] = ++cnt;
     low[v] = ord[v];
-	bool flag = false;
     for (auto u: adj[v]) if (u != p) {
         if (ord[u]) low[v] = min(low[v], ord[u]);
         else {

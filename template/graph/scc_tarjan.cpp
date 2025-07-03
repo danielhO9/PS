@@ -33,29 +33,10 @@ void dfs(vector<vector<int>>& ret, stack<int>& s, int v) {
 }
 
 // V: maximum vertex + 1
-// TODO: 1-index
+// 1-index
 vector<vector<int>> getScc(int V) {
 	vector<vector<int>> ret;
     stack<int> s;
 	for (int i = 1; i < V; ++i) if (!ord[i]) dfs(ret, s, i);
 	return ret;
-}
-
-int V, E;
-
-int main() {
-	ios::sync_with_stdio(0); cin.tie(0);
-	cin >> V >> E;
-	while (E--) {
-		int A, B; cin >> A >> B;
-		adj[A].push_back(B);
-	}
-	auto ans = getScc(V + 1);
-	for (auto& i: ans) sort(i.begin(), i.end());
-	sort(ans.begin(), ans.end());
-	cout << ans.size() << '\n';
-	for (auto i: ans) {
-		for (auto j: i) cout << j << ' ';
-		cout << "-1\n";
-	}
 }
