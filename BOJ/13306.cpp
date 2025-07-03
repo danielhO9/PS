@@ -3,25 +3,24 @@ using namespace std;
 
 // 0-index
 struct UF {
-	vector<int> par, sz;
+	vector<int> par, rk;
 
 	UF(int _sz) {
 		par.resize(_sz);
-		sz.resize(_sz);
+		rk.resize(_sz);
 		for (int i = 0; i < _sz; ++i) par[i] = i;
-		for (int i = 0; i < _sz; ++i) sz[i] = 1;
 	}
 	int find(int x) {
 		if (par[x] == x) return x;
 		par[x] = find(par[x]);
 		return par[x];
 	}
-	void union_path(int x, int y) {
+	void union_rank(int x, int y) {
 		x = find(x); y = find(y);
 		if (x == y) return;
-		if (sz[x] > sz[y]) swap(x, y);
+		if (rk[x] > rk[y]) swap(x, y);
 		par[x] = y;
-		sz[y] += sz[x];
+		if (rk[x] == rk[y]) ++rk[y];
 	}
 };
 
@@ -51,7 +50,7 @@ int main() {
     reverse(v.begin(), v.end());
     vector<int> ans;
     for (Query& q: v) {
-        if (q.x == 0) uf.union_path(q.a, q.b);
+        if (q.x == 0) uf.union_rank(q.a, q.b);
         else {
             if (uf.find(q.a) == uf.find(q.b)) ans.push_back(1);
             else ans.push_back(0);
