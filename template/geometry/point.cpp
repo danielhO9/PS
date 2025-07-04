@@ -73,6 +73,27 @@ struct Line {
 	}
 };
 
+template<typename T>
+T polygonArea2(const vector<Point<T>>& pts) {
+	assert(!pts.empty());
+	T ret = pts.back().cross(pts[0]);
+	for (int i = 0; i + 1 < pts.size(); ++i) ret += pts[i].cross(pts[i + 1]);
+	return abs(ret);
+}
+
+template <typename T>
+bool inConvex(const Point<T>& p, const vector<Point<T>>& pts) {
+    assert(pts.size() >= 3);
+    if (pts[0].cross(pts[1], p) < 0 || pts[0].cross(pts.back(), p) > 0) return false;
+    int l = 0, r = pts.size(), mid; --r;
+    while (l + 1 < r) {
+        mid = (l + r) / 2;
+        if (pts[0].cross(p, pts[mid]) >= 0) r = mid;
+        else l = mid;
+    }
+    return pts[r - 1].cross(pts[r], p) > 0;
+}
+
 template <typename T>
 bool inConcave(const Point<T>& pt, const vector<Point<T>>& pts) {
 	vector<Line<ll>> lines;
@@ -89,13 +110,75 @@ bool inConcave(const Point<T>& pt, const vector<Point<T>>& pts) {
 	else return false;
 }
 
-int main() {
-    ios::sync_with_stdio(0); cin.tie(0);
-    int N; cin >> N;
-    vector<Point<ll>> pts(N);
-    for (int i = 0; i < N; ++i) cin >> pts[i];
-    for (int i = 0; i < 3; ++i) {
-		Point<ll> pt; std::cin >> pt;
-		cout << inConcave(pt, pts) << '\n';
+template<typename P>
+vector<P> convexHull(vector<P> pts) {
+	if (pts.size() <= 1) return pts;
+	sort(pts.begin(), pts.end());
+	P unit = pts[0];
+	for (auto& i: pts) i = i - unit;
+	sort(next(pts.begin()), pts.end(), [](const P& a, const P& b) {
+		if (a.cross(b) == 0) {
+			if (a.x == b.x) return a.y < b.y;
+			return a.x < b.x;
+		}
+		return a.cross(b) > 0;
+	});
+	vector<P> h;
+	h.push_back(pts[0]); h.push_back(pts[1]);
+	for (int i = 2; i < pts.size(); ++i) {
+		while (h.size() >= 2) {
+			P b = h.back(); h.pop_back();
+			P a = h.back();
+			if (a.cross(b, pts[i]) > 0) {
+				h.push_back(b);
+				break;
+			}
+		}
+		h.push_back(pts[i]);
 	}
+	for (auto& i: h) i = i + unit;
+	return h;
+}
+
+// rotating calipers(convex)
+template<typename T>
+pair<Point<T>, Point<T>> hullDiameter(vector<Point<T>>& pts) {
+	int n = pts.size();
+	if (n == 0) return {Point<T>(0, 0), Point<T>(0, 0)};
+	if (n == 1) return {pts[0], pts[0]};
+	pair<T, pair<Point<T>, Point<T>>> res({0, {pts[0], pts[0]}});
+	int j = 1;
+	for (int i = 0; i < j; ++i) {
+		while (true) {
+			res = max(res, {(pts[i] - pts[j]).dist2(), {pts[i], pts[j]}});
+			if ((pts[(j + 1) % n] - pts[j]).cross(pts[i + 1] - pts[i]) >= 0) break;
+			j = (j + 1) % n;
+		}
+	}
+	return res.second;
+}
+
+// half plane intersection(convex)
+template<typename T>
+vector<Point<T>> hpi(vector<Line<T>> lines) {
+	// intersection of a, b is not part of c's half plane
+	auto bad = [&](Line<T>& a, Line<T>& b, Line<T>& c) {
+		auto v = a.lineInter(b);
+		if (v.first != 1) return false;
+		return c.s.cross(c.e, v.second) <= EPS;
+	};
+	sort(lines.begin(), lines.end());
+	deque<Line<T>> dq;
+	for (int i = 0; i < lines.size(); ++i) {
+		while(dq.size() >= 2 && bad(dq[(int) dq.size() - 2], dq.back(), lines[i])) dq.pop_back();
+		while(dq.size() >= 2 && bad(dq[0], dq[1], lines[i])) dq.pop_front();
+		if (dq.size() < 2 || !bad(dq.back(), lines[i], dq[0])) dq.push_back(lines[i]);
+	}
+	vector<Point<T>> ret;
+	if (dq.size() >= 3) for (int i = 0; i < dq.size(); ++i) {
+		int j = (i + 1) % dq.size();
+		auto v = dq[i].lineInter(dq[j]);
+		if (v.first == 1) ret.push_back(v.second);
+	}
+	return ret;
 }

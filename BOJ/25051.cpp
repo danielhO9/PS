@@ -73,29 +73,43 @@ struct Line {
 	}
 };
 
-template <typename T>
-bool inConcave(const Point<T>& pt, const vector<Point<T>>& pts) {
-	vector<Line<ll>> lines;
-	const int n = pts.size();
-    for (int i = 0; i < n; ++i) lines.push_back(Line<ll>(pts[i], pts[(i + 1) % n]));
-	Line<ll> line {pt, Point<ll> {pt.x + 1000000000ll, pt.y + 1}}; // non parallel
-	for (auto j: lines) if (j.onSegment(pt)) return true;
-	int cnt = 0;
-	for (auto j: lines) {
-		auto tmp = j.segInter(line).first;
-		cnt += tmp;
-	}
-	if (cnt % 2) return true;
-	else return false;
-}
+int N, M;
+Point<ll> star[100000];
+ll S[100000], P[200];
+vector<int> v[200];
 
 int main() {
     ios::sync_with_stdio(0); cin.tie(0);
-    int N; cin >> N;
-    vector<Point<ll>> pts(N);
-    for (int i = 0; i < N; ++i) cin >> pts[i];
-    for (int i = 0; i < 3; ++i) {
-		Point<ll> pt; std::cin >> pt;
-		cout << inConcave(pt, pts) << '\n';
-	}
+    set<pair<Line<ll>, ll>> s;
+    cin >> N >> M;
+    for (int i = 0; i < N; ++i) cin >> star[i] >> S[i];
+    for (int i = 0; i < M; ++i) cin >> P[i];
+    sort(P, P + M);
+    for (int i = 0; i < N; ++i) {
+        auto idx = lower_bound(P, P + M, star[i].dist2()) - P;
+        if (idx == M) continue;
+        v[idx].push_back(i);
+    }
+    ll ans = LLONG_MIN;
+    for (int i = 0; i < M; ++i) {
+        ll cur = -P[i];
+        for (auto j: v[i]) s.insert(make_pair(Line<ll>{Point<ll>{0,0},star[j]}, S[j]));
+        ans = max(ans, cur);
+        if (s.empty()) continue;
+        auto r = s.begin();
+        for (auto l = s.begin(); l != s.end(); ++l) {
+            while (true) {
+                if (l->first.e.cross(r->first.e) >= 0 && l->first.e.dot(r->first.e) >= 0) {
+                    cur += r->second;
+                    ++r;
+                }
+                else break;
+                if (r == s.end()) r = s.begin();
+                if (l == r) break;
+            }
+            ans = max(ans, cur);
+            cur -= l->second;
+        }
+    }
+    cout << ans;
 }

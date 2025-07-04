@@ -74,28 +74,35 @@ struct Line {
 };
 
 template <typename T>
-bool inConcave(const Point<T>& pt, const vector<Point<T>>& pts) {
-	vector<Line<ll>> lines;
-	const int n = pts.size();
-    for (int i = 0; i < n; ++i) lines.push_back(Line<ll>(pts[i], pts[(i + 1) % n]));
-	Line<ll> line {pt, Point<ll> {pt.x + 1000000000ll, pt.y + 1}}; // non parallel
-	for (auto j: lines) if (j.onSegment(pt)) return true;
-	int cnt = 0;
-	for (auto j: lines) {
-		auto tmp = j.segInter(line).first;
-		cnt += tmp;
-	}
-	if (cnt % 2) return true;
-	else return false;
+bool inConvex(const Point<T>& p, const vector<Point<T>>& pts) {
+    assert(pts.size() >= 3);
+    if (pts[0].cross(pts[1], p) < 0 || pts[0].cross(pts.back(), p) > 0) return false;
+    int l = 0, r = pts.size(), mid; --r;
+    while (l + 1 < r) {
+        mid = (l + r) / 2;
+        if (pts[0].cross(p, pts[mid]) >= 0) r = mid;
+        else l = mid;
+    }
+    return pts[r - 1].cross(pts[r], p) > 0;
 }
+
+int N, M, K;
+vector<Point<ll>> A, B;
 
 int main() {
     ios::sync_with_stdio(0); cin.tie(0);
-    int N; cin >> N;
-    vector<Point<ll>> pts(N);
-    for (int i = 0; i < N; ++i) cin >> pts[i];
-    for (int i = 0; i < 3; ++i) {
-		Point<ll> pt; std::cin >> pt;
-		cout << inConcave(pt, pts) << '\n';
-	}
+    cin >> N >> M >> K;
+    A.resize(N); B.resize(M);
+    for (int i = 0; i < N; ++i) cin >> A[i];
+    for (int i = 0; i < M; ++i) cin >> B[i];
+    int cnt = 0;
+    for (int i = 0; i < K; ++i) {
+        Point<ll> p; cin >> p;
+        if (!inConvex(p, A) || inConvex(p, B)) {
+            // cout << p << ' ' << inConvex(p, A) << ' ' << inConvex(p, B) << '\n';
+            ++cnt;
+        }
+    }
+    if (cnt) cout << cnt;
+    else cout << "YES";
 }
