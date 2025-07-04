@@ -9,7 +9,7 @@ struct SegmentTree {
 	int sz;
 
 	ll merge(ll a, ll b) { return a + b; }
-	SegmentTree(int sz) : SegmentTree(vector<ll>(sz, dValue)) {}
+	SegmentTree(int sz): SegmentTree(vector<ll>(sz, dValue)) {}
 	SegmentTree(const vector<ll>& a) {
 		sz = a.size();
 		arr = a;

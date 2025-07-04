@@ -67,27 +67,3 @@ struct LazyPropagation {
 	void update(ll left, ll right, ll val) { update_range(1, 0, sz - 1, left, right, val); }
 	ll query(ll left, ll right) { return query(1, 0, sz - 1, left, right); }
 };
-
-int main() {
-    ios_base::sync_with_stdio(0); cin.tie(0);
-    int n, m, k;
-    cin >> n >> m >> k;
-    vector<ll> a(n);
-    m += k;
-    for (int i = 0; i < n; ++i) cin >> a[i];
-    LazyPropagation seg {a};
-    while (m--) {
-        int what;
-        cin >> what;
-        if (what == 1) {
-            int left, right; ll diff;
-            cin >> left >> right >> diff;
-            seg.update(left - 1, right - 1, diff);
-        } else if (what == 2) {
-            int left, right;
-            cin >> left >> right;
-            cout << seg.query(left - 1, right - 1) << '\n';
-        }
-    }
-    return 0;
-}
