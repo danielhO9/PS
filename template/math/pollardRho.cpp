@@ -87,19 +87,3 @@ vector<ll> factorization(__int128_t n) {
 	pollardRho(n, ret);
 	return ret;
 }
-
-void solve() {
-	ll n; cin >> n;
-	vector<ll> ans = factorization(n);
-	set<ll> S;
-	for (auto i: ans) S.insert(i);
-	for (auto i: S) {
-		n /= i; n *= (i - 1);
-	}
-	cout << (ll) n;
-}
-
-int main() {
-	ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
-	solve();
-}
