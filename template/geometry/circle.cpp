@@ -47,6 +47,7 @@ Circle<T> ccCenter(const Point<T>& a, const Point<T>& b, const Point<T>& c) {
 }
 
 // minimum enclosing center
+// time complexity: N^3
 template<typename T>
 Circle<T> mec(vector<Point<T>> pts) {
 	shuffle(pts.begin(), pts.end(), mt19937(time(0)));

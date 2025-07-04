@@ -81,6 +81,7 @@ T polygonArea2(const vector<Point<T>>& pts) {
 	return abs(ret);
 }
 
+// time complexity: logN
 template <typename T>
 bool inConvex(const Point<T>& p, const vector<Point<T>>& pts) {
     assert(pts.size() >= 3);
@@ -94,6 +95,7 @@ bool inConvex(const Point<T>& p, const vector<Point<T>>& pts) {
     return pts[r - 1].cross(pts[r], p) > 0;
 }
 
+// time complexity: N
 template <typename T>
 bool inConcave(const Point<T>& pt, const vector<Point<T>>& pts) {
 	vector<Line<ll>> lines;
