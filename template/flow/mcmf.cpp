@@ -71,30 +71,3 @@ void addEdge(int s, int e, ll cap, ll dis) {
 	adj[s].push_back({e, cap, dis, (int)adj[e].size()});
 	adj[e].push_back({s, 0, -dis, (int)adj[s].size() - 1});
 }
-
-void solve() {
-	int n, m; cin >> n >> m;
-	for (int i = 0; i < n + 2; ++i) adj[i].clear();
-	int source = 0, sink = n + 1;
-	while (m--) {
-		int x, y; cin >> x >> y;
-		addEdge(x, y, INF, 1);
-		addEdge(y, x, INF, 1);
-	}
-	for (int i = 1; i <= n; ++i) {
-		int col; cin >> col;
-		if (col == 0) addEdge(i, sink, 1, 0);
-	}
-	for (int i = 1; i <= n; ++i) {
-		int col; cin >> col;
-		if (col == 0) addEdge(source, i, 1, 0);
-	}
-	auto ans = networkFlow(source, sink, n + 2);
-	cout << ans.second << '\n';
-}
-
-int main() {
-	ios::sync_with_stdio(0); cin.tie(0);
-	int t; cin >> t;
-	while (t--) solve();
-}

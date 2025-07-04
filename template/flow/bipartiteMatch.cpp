@@ -21,6 +21,7 @@ bool dfs(int a) {
 	return false;
 }
 
+// time complexity: V*E
 int bipartiteMatch(int N, int M) {
 	for (int i = 0; i < N; ++i) aMatch[i] = -1;
 	for (int i = 0; i < M; ++i) bMatch[i] = -1;

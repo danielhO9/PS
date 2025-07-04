@@ -9,7 +9,7 @@ struct Edge {
 	ll flow = 0;
 };
 
-const int MAX_V = 1002;
+const int MAX_V = 10001;
 vector<Edge> adj[MAX_V];
 
 bool bfs(int source, int sink, vector<int>& level) {
@@ -69,21 +69,15 @@ void addEdge(int s, int e, ll c) {
 	adj[e].push_back({s, 0, (int)adj[s].size() - 1});
 }
 
-void solve() {
-	int n, m, k; cin >> n >> k; m = n;
-	// 0 ~ n - 1, 0 ~ m - 1
-	for (int i = 0; i < k; ++i) {
-		int a, b; cin >> a >> b; --a; --b;
-		addEdge(a, b + n, 1);
-	}
-	int src = 2 * n, sink = 2 * n + 1;
-	for (int i = 0; i < n; ++i) addEdge(src, i, 1);
-	for (int i = n; i < 2 * n; ++i) addEdge(i, sink, 1);
-	auto ans = networkFlow(src, sink, 2 * n + 2);
-	cout << ans;
-}
+int n, m;
 
 int main() {
-	ios::sync_with_stdio(0); cin.tie(0);
-	solve();
+    ios::sync_with_stdio(0); cin.tie(0);
+    cin >> n >> m;
+    while (m--) {
+        int u, v; cin >> u >> v;
+        addEdge(u, v, 1);
+    }
+    cout << networkFlow(1, n, n + 1);
+    
 }

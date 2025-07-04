@@ -9,7 +9,7 @@ struct Edge {
 	ll flow = 0;
 };
 
-const int MAX_V = 1002;
+const int MAX_V = 20002;
 vector<Edge> adj[MAX_V];
 
 bool bfs(int source, int sink, vector<int>& level) {
@@ -47,7 +47,6 @@ ll dfs(int here, int sink, ll amount, vector<int>& level, vector<int>& work) {
 	return 0;
 }
 
-// time complexity: V^2*E
 // V: maximum vertex + 1
 ll networkFlow(int source, int sink, int V) {
 	for (int i = 0; i < V; ++i) for (Edge& j: adj[i]) j.flow = 0;
@@ -69,21 +68,28 @@ void addEdge(int s, int e, ll c) {
 	adj[e].push_back({s, 0, (int)adj[s].size() - 1});
 }
 
+int n;
+
 void solve() {
-	int n, m, k; cin >> n >> k; m = n;
-	// 0 ~ n - 1, 0 ~ m - 1
-	for (int i = 0; i < k; ++i) {
-		int a, b; cin >> a >> b; --a; --b;
-		addEdge(a, b + n, 1);
-	}
-	int src = 2 * n, sink = 2 * n + 1;
-	for (int i = 0; i < n; ++i) addEdge(src, i, 1);
-	for (int i = n; i < 2 * n; ++i) addEdge(i, sink, 1);
-	auto ans = networkFlow(src, sink, 2 * n + 2);
-	cout << ans;
+    for (int i = 0; i <= 2 * n + 1; ++i) adj[i].clear();
+    int src = 2 * n, sink = 2 * n + 1;
+    for (int i = 0; i < n; ++i) {
+        string tmp; cin >> tmp; tmp.pop_back();
+        int job = stoi(tmp);
+        assert(0 <= job && job < n);
+        cin >> tmp; int cnt = stoi(tmp.substr(1, (int)tmp.size() - 2));
+        for (int j = 0; j < cnt; ++j) {
+            int s; cin >> s;
+            assert(n <= s && s < 2 * n);
+            addEdge(job, s, 1);
+        }
+    }
+    for (int i = 0; i < n; ++i) addEdge(src, i, 1);
+    for (int i = n; i < 2 * n; ++i) addEdge(i, sink, 1);
+    cout << networkFlow(src, sink, 2 * n + 2) << "\n";
 }
 
 int main() {
-	ios::sync_with_stdio(0); cin.tie(0);
-	solve();
+    ios::sync_with_stdio(0); cin.tie(0);
+    while (cin >> n) solve();
 }

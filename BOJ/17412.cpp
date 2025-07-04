@@ -9,60 +9,73 @@ struct Edge {
 	ll flow = 0;
 };
 
-int networkFlow(int source, int sink, vector<vector<Edge>>& adj) {
-	const int MAX_V = adj.size();
-	for (int i = 0; i < MAX_V; ++i) for (Edge& j: adj[i]) j.flow = 0;
-	ll totalFlow = 0;
-	int parent[MAX_V], ind[MAX_V];
-	while (true) {
-		memset(parent, -1, sizeof(parent));
-		queue<int> q;
-		parent[source] = source;
-		q.push(source);
-		while (!q.empty() && parent[sink] == -1) {
-			int here = q.front(); q.pop();
-			for (int i = 0; i < adj[here].size(); ++i) {
-				Edge& edge = adj[here][i];
-				int there = edge.vertex;
-				if (edge.capacity - edge.flow > 0 && parent[there] == -1) {
-					parent[there] = here;
-					q.push(there);
-					ind[there] = i;
-				}
-			}
-		}
-		if (parent[sink] == -1) break;
+const int MAX_V = 401;
+vector<Edge> adj[MAX_V];
 
-		ll amount = INT32_MAX;
-		for (int p = sink; p != source; p = parent[p]) {
-			Edge& edge = adj[parent[p]][ind[p]];
-			amount = min(edge.capacity - edge.flow, amount);
-		}
-		for (int p = sink; p != source; p = parent[p]) {
-			Edge& edge = adj[parent[p]][ind[p]];
-			edge.flow += amount;
-			adj[edge.vertex][edge.reverse].flow -= amount;
-		}
-		totalFlow += amount;
-	}
+bool bfs(int source, int sink, vector<int>& level) {
+    for (auto& i: level) i = -1;
+	level[source] = 0;
+	queue<int> q;
+	q.push(source);
+	while (!q.empty()) {
+        int here = q.front(); q.pop();
+		for (Edge& edge: adj[here]) {
+			int there = edge.vertex;
+			if (level[there] == -1 && edge.capacity - edge.flow > 0) {
+				q.push(there);
+                level[there] = level[here] + 1;
+            }
+        }
+    }
+	return level[sink] != -1;
+}
+
+ll dfs(int here, int sink, ll amount, vector<int>& level, vector<int>& work) {
+    if (here == sink) return amount;
+ 	for (int& i = work[here]; i < adj[here].size(); ++i){
+        Edge& edge = adj[here][i];
+		int there = edge.vertex;
+		if (level[there] == level[here] + 1 && edge.capacity - edge.flow > 0) {
+            ll ret = dfs(there, sink, min(edge.capacity - edge.flow, amount), level, work);
+			if (ret > 0) {
+                edge.flow += ret;
+				adj[there][edge.reverse].flow -= ret;
+				return ret;
+            }
+        }
+    }
+	return 0;
+}
+
+// V: maximum vertex + 1
+ll networkFlow(int source, int sink, int V) {
+	for (int i = 0; i < V; ++i) for (Edge& j: adj[i]) j.flow = 0;
+	ll totalFlow = 0;
+	vector<int> level(V), work(V);
+    while (bfs(source, sink, level)) {
+        for (auto& i: work) i = 0;
+		while (true) {
+            ll amount = dfs(source, sink, INT32_MAX, level, work);
+            if (amount == 0) break;
+            totalFlow += amount;
+        }
+    }
 	return totalFlow;
 }
 
-void addEdge(int s, int e, ll c, vector<vector<Edge>>& adj) {
+void addEdge(int s, int e, ll c) {
 	adj[s].push_back({e, c, (int)adj[e].size()});
 	adj[e].push_back({s, 0, (int)adj[s].size() - 1});
 }
 
 void solve() {
 	int N, P; cin >> N >> P;
-	int MAX_V; MAX_V = N + 1;
-	vector<vector<Edge>> adj(MAX_V);
 	for (int i = 0; i < P; ++i) {
 		int s, e; cin >> s >> e;
-		addEdge(s, e, 1, adj);
+		addEdge(s, e, 1);
 	}
 	int source, sink; source = 1, sink = 2;
-	auto ans = networkFlow(source, sink, adj);
+	auto ans = networkFlow(source, sink, N + 1);
 	cout << ans;
 }
 
