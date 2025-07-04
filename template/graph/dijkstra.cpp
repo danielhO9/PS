@@ -6,8 +6,9 @@ const int MAX_V = 100001;
 vector<pair<int, ll>> adj[MAX_V];
 
 // time complexity: (V+E)logV
-vector<ll> dijkstra(int src) {
-	vector<ll> dist(MAX_V, LLONG_MAX);
+// V: maximum vertex + 1
+vector<ll> dijkstra(int src, int V) {
+	vector<ll> dist(V, LLONG_MAX);
 	dist[src] = 0;
 	priority_queue<pair<ll, int>> pq;
 	pq.push(make_pair(0, src));

@@ -6,14 +6,15 @@ const int MAX_V = 100001;
 vector<pair<int, ll>> adj[MAX_V];
 
 struct LCA {
-    int dep[MAX_V];
-    ll dis[MAX_V];
+    vector<int> dep;
+    vector<ll> dis;
     vector<vector<int>> f;
     
-    LCA() {
-        int h = (int)ceil(log2(MAX_V)); ++h;
-        f = vector<vector<int>>(h, vector<int>(MAX_V));
-        init(MAX_V);
+    LCA(int V) {
+        dep.resize(V); dis.resize(V);
+        int h = (int)ceil(log2(V)); ++h;
+        f = vector<vector<int>>(h, vector<int>(V));
+        init(V);
     }
     void dfs(int v, int p, ll d) {
         f[0][v] = p;
@@ -41,7 +42,7 @@ struct LCA {
         }
         return u;
     }
-    void init(int v = MAX_V) {
+    void init(int v) {
         const int h = f.size();
         dfs(1, -1, 0ll); // TODO: root 1
         for (int i = 1; i < h; ++i) {

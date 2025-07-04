@@ -34,19 +34,3 @@ int bipartiteMatch(int N, int M) {
 	}
 	return size;
 }
-
-void solve() {
-	int n, m, k; cin >> n >> k; m = n;
-	// 0 ~ n - 1, 0 ~ m - 1
-	for (int i = 0; i < k; ++i) {
-		int a, b; cin >> a >> b; --a; --b;
-		adj[a].push_back(b);
-	}
-	int ans = bipartiteMatch(n, m);
-	cout << ans;
-}
-
-int main() {
-	ios::sync_with_stdio(0); cin.tie(0);
-	solve();
-}

@@ -7,9 +7,9 @@ vector<pair<int, ll>> adj[MAX_V];
 
 // time complexity: V+E
 // empty vector: negative cycle
-vector<ll> spfa(int src) {
-	vector<ll> dist(MAX_V, LLONG_MAX), cycleCnt(MAX_V, 0);
-	vector<bool> inQ(MAX_V, false);
+vector<ll> spfa(int src, int V) {
+	vector<ll> dist(V, LLONG_MAX), cycleCnt(V, 0);
+	vector<bool> inQ(V, false);
 	dist[src] = 0;
 	queue<int> q;
 	q.push(src); inQ[src] = true;
@@ -19,7 +19,7 @@ vector<ll> spfa(int src) {
 			dist[there] = dist[here] + cost;
 			if (!inQ[there]) {
 				++cycleCnt[there];
-				if (cycleCnt[there] >= MAX_V) return {};
+				if (cycleCnt[there] >= V) return {};
 				q.push(there);
 				inQ[there] = true;
 			}
