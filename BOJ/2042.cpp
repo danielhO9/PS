@@ -2,69 +2,32 @@
 using namespace std;
 typedef long long ll;
 
-struct SegmentTree {
-	vector<ll> arr;
-	vector<ll> tree;
-	static constexpr ll dValue = 0; // TODO
-	int sz;
+// 1-index
+struct Fenwick {
+    vector<ll> tree;
 
-	ll merge(ll a, ll b) { return a + b; }
-	SegmentTree(int sz) : SegmentTree(vector<ll>(sz, dValue)) {}
-	SegmentTree(const vector<ll>& a) {
-		sz = a.size();
-		arr = a;
-		int h = (int)ceil(log2(sz));
-		int tree_size = (1 << (h + 1));
-		tree = vector<ll>(tree_size);
-		init(1, 0, sz - 1);
-	}
-	void init(int node, int start, int end) {
-		if (start == end) tree[node] = arr[start];
-		else {
-			int mid = (start + end) / 2;
-			init(node * 2, start, mid);
-			init(node * 2 + 1, mid + 1, end);
-			tree[node] = merge(tree[node * 2], tree[node * 2 + 1]);
-		}
-	}
-	void update(int node, int start, int end, int index, ll val) {
-		if (index < start || index > end) return;
-		if (start == end) {
-			arr[index] = val;
-			tree[node] = val;
-			return;
-		}
-		int mid = (start + end) / 2;
-		update(node * 2, start, mid, index, val);
-		update(node * 2 + 1, mid + 1, end, index, val);
-		tree[node] = merge(tree[node * 2], tree[node * 2 + 1]);
-	}
-	ll query(int node, int start, int end, int left, int right) {
-		if (left > end || right < start) return dValue;
-		if (left <= start && end <= right) return tree[node];
-		int mid = (start + end) / 2;
-		ll lsum = query(node * 2, start, mid, left, right);
-		ll rsum = query(node * 2 + 1, mid + 1, end, left, right);
-		return merge(lsum, rsum);
-	}
-	void update(int index, ll val) { update(1, 0, sz - 1, index, val); }
-	ll query(int left, int right) { return query(1, 0, sz - 1, left, right); }
+    Fenwick(int sz) { tree.resize(sz); }
+    void update(int i, ll dif) { while (i < tree.size()) { tree[i] += dif; i += (i & -i); } }
+    ll query(int i) {
+        ll ret = 0;
+        while (i > 0) { ret += tree[i]; i -= (i & -i); }
+        return ret;
+    }
 };
 
 void solve() {
 	int N, M, K; cin >> N >> M >> K;
+	Fenwick tree {N+1};
 	vector<ll> a(N); for (int i = 0; i < N; ++i) cin >> a[i];
-	SegmentTree seg {a};
+	for (int i = 0; i < N; ++i) tree.update(i + 1, a[i]);
 	M += K;
 	while (M--) {
-		ll a, b, c; cin >> a >> b >> c;
-		if (a == 1) {
-			--b;
-			seg.update(b, c);
-		} else {
-			--b; --c;
-			cout << seg.query(b, c) << '\n';
+		ll t, b, c; cin >> t >> b >> c;
+		if (t == 1) {
+			tree.update(b, c - a[b-1]);
+			a[b-1] = c;
 		}
+		else cout << tree.query(c) - tree.query(b - 1) << '\n';
 	}
 }
 
