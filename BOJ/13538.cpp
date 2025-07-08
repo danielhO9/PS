@@ -8,16 +8,15 @@ struct Node {
 };
 
 struct PST {
-	vector<Node> tree = {{0, 0, 0}, {0, 0, 0}};
+	vector<Node> tree = {{0, 0, 0}};
 	vector<int> root;
 	int sz;
 	int ridx;
 
 	void init(int sz_) {
 		sz = sz_;
-		ridx = 1;
+		ridx = 0;
 		root.resize(sz);
-		root[0] = 1;
 	}
 	void changeRoot(int idx) { ridx = root[idx]; }
 	void setRoot(int idx) {
