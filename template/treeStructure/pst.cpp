@@ -9,6 +9,7 @@ struct PST {
 	vector<int> root; // 1-index (0: dummy)
 	int sz;
 
+	PST() = default;
 	PST(int sz): sz(sz) {
         tree.resize(1);
         root.resize(1);

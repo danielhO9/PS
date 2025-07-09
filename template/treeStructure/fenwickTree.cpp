@@ -6,6 +6,7 @@ typedef long long ll;
 struct Fenwick {
     vector<ll> tree;
 
+    Fenwick() = default;
     Fenwick(int sz) { tree.resize(sz); }
     void update(int i, ll dif) { while (i < tree.size()) { tree[i] += dif; i += (i & -i); } }
     ll query(int i) {

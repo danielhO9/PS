@@ -10,6 +10,7 @@ struct LazyPropagation {
 	int sz;
 
 	inline ll merge(ll a, ll b) { return a + b; }
+	LazyPropagation() = default;
 	LazyPropagation(int sz): LazyPropagation(vector<ll>(sz, dValue)) {}
 	LazyPropagation(const vector<ll>& a) {
 		sz = a.size();

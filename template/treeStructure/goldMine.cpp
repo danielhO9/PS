@@ -22,6 +22,7 @@ struct SegmentTree {
 		ret.sm = l.sm + r.sm;
 		return ret;
 	}
+	SegmentTree() = default;
 	SegmentTree(const vector<ll>& a) {
 		sz = a.size();
 		arr = a;

@@ -7,6 +7,7 @@ struct MergeSortTree {
 	vector<vector<ll>> tree;
 	int sz;
 
+	MergeSortTree() = default;
 	MergeSortTree(vector<ll>& a) {
 		sz = a.size();
 		arr = a;
