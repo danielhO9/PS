@@ -35,19 +35,26 @@ vector<int> centroid(int v, int p) {
 const ll prime[2] = {17, 53};
 const ll MOD = 998244353;
 
-ll dfs(int v, int p) {
-    multiset<ll> s;
-    ll val[2] = {1, 1};
+ll hashing(const vector<ll>& a) {
+    ll val[2] = {1ll, 1ll};
     ll curp[2] = {1, 1};
-    for (auto u: adj[v]) if (u != p) s.insert(dfs(u, v));
-    for (auto cval: s) {
+    for (auto j: a) {
         for (int i = 0; i < 2; ++i) {
             curp[i] *= prime[i]; curp[i] %= MOD;
-            val[i] += (cval * curp[i]) % MOD;
+            val[i] += (j * curp[i]) % MOD;
             val[i] %= MOD;
         }
     }
     return val[0] * val[1];
+}
+
+ll dfs(int v, int p) {
+    vector<ll> s;
+    ll val[2] = {1, 1};
+    ll curp[2] = {1, 1};
+    for (auto u: adj[v]) if (u != p) s.push_back(dfs(u, v));
+    sort(s.begin(), s.end());
+    return hashing(s);
 }
 
 int n;
