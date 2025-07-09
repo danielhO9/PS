@@ -6,8 +6,8 @@ const ll prime[2] = {17, 53};
 const ll MOD = 998244353;
 
 ll hashing(const vector<ll>& a) {
-    ll val[2] = {1ll, 1ll};
-    ll curp[2] = {1, 1};
+    vector<ll> val(2, 1);
+    vector<ll> curp(2, 1);
     for (auto j: a) {
         for (int i = 0; i < 2; ++i) {
             curp[i] *= prime[i]; curp[i] %= MOD;
