@@ -2,22 +2,21 @@
 using namespace std;
 typedef long long ll;
 
-const int N = 2000001; // modify
+const int N = 31;
 bool vis[N];
 int sz[N];
-vector<int> tmp[30];
-vector<int> adj[N];
+set<int> adj[N];
 
 int getSize(int v, int p) {
     int& ret = sz[v]; ret = 1;
-    for (auto u: tmp[v]) if (u != p && !vis[u]) ret += getSize(u, v);
+    for (auto u: adj[v]) if (u != p && !vis[u]) ret += getSize(u, v);
     return ret;
 }
 
 void getCent(int v, int p, int nsz, vector<int>& ret) {
     int psz = nsz - 1;
     bool flag = true;
-    for (auto u: tmp[v]) if (u != p && !vis[u]) {
+    for (auto u: adj[v]) if (u != p && !vis[u]) {
         if (sz[u] * 2 >= nsz) getCent(u, v, nsz, ret);
         if (sz[u] * 2 > nsz) flag = false;
         psz -= sz[u];
@@ -36,7 +35,7 @@ const ll prime[2] = {17, 53};
 const ll MOD = 998244353;
 
 ll hashing(const vector<ll>& a) {
-    ll val[2] = {1ll, 1ll};
+    ll val[2] = {1, 1};
     ll curp[2] = {1, 1};
     for (auto j: a) {
         for (int i = 0; i < 2; ++i) {
@@ -58,44 +57,32 @@ ll dfs(int v, int p) {
 }
 
 int n;
-int num[30];
-int cnt;
 
 int main() {
     ios::sync_with_stdio(0); cin.tie(0);
     cin >> n;
-    cnt = 0;
-    vector<int> rt1, rt2;
+    unordered_set<ll> rt1, rt2;
     for (int i = 0; i < n; ++i) {
         int s; cin >> s;
+        for (int j = 0; j <= s; ++j) {
+            adj[j].clear();
+            vis[j] = false;
+        }
         for (int j = 0; j < s - 1; ++j) {
             int u, v; cin >> u >> v;
-            if (num[u] == 0) num[u] = ++cnt;
-            if (num[v] == 0) num[v] = ++cnt;
-            tmp[u].push_back(v);
-            tmp[v].push_back(u);
+            adj[u].insert(v);
+            adj[v].insert(u);
         }
         auto cs = centroid(0, -1);
         if (cs.size() == 2) {
-            int c = ++cnt;
-            adj[c].push_back(num[cs[0]]);
-            adj[c].push_back(num[cs[1]]);
-            adj[num[cs[0]]].push_back(c);
-            adj[num[cs[1]]].push_back(c);
-            rt2.push_back(c);
-        } else rt1.push_back(num[cs[0]]);
-
-        for (int j = 0; j < s; ++j) {
-            for (auto k: tmp[j]) {
-                if (cs.size() == 2 && j + k == cs[0] + cs[1] && abs(j - k) == abs(cs[0] - cs[1])) continue;
-                adj[num[j]].push_back(num[k]);
-            }
-            tmp[j].clear();
-        }
-        for (int j = 0; j < s; ++j) num[j] = 0;
+            adj[cs[0]].insert(s);
+            adj[cs[1]].insert(s);
+            adj[s].insert(cs[0]);
+            adj[s].insert(cs[1]);
+            if (adj[cs[0]].find(cs[1]) != adj[cs[0]].end()) adj[cs[0]].erase(adj[cs[0]].find(cs[1]));
+            if (adj[cs[1]].find(cs[0]) != adj[cs[1]].end()) adj[cs[1]].erase(adj[cs[1]].find(cs[0]));
+            rt2.insert(dfs(s, -1));
+        } else rt1.insert(dfs(cs[0], -1));
     }
-    unordered_set<ll> s1, s2;
-    for (auto i: rt1) s1.insert(dfs(i, -1));
-    for (auto i: rt2) s2.insert(dfs(i, -1));
-    cout << s1.size() + s2.size();
+    cout << rt1.size() + rt2.size();
 }
