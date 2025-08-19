@@ -1,16 +1,16 @@
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;
+const ll INIT_VALUE = 0; // TODO
 
 struct SegmentTree {
 	vector<ll> arr;
 	vector<ll> tree;
-	static constexpr ll dValue = 0; // TODO
 	int sz;
 
 	ll merge(ll a, ll b) { return a + b; }
 	SegmentTree() = default;
-	SegmentTree(int sz): SegmentTree(vector<ll>(sz, dValue)) {}
+	SegmentTree(int sz): SegmentTree(vector<ll>(sz, INIT_VALUE)) {}
 	SegmentTree(const vector<ll>& a) {
 		sz = a.size();
 		arr = a;
@@ -41,7 +41,7 @@ struct SegmentTree {
 		tree[node] = merge(tree[node * 2], tree[node * 2 + 1]);
 	}
 	ll query(int node, int start, int end, int left, int right) {
-		if (left > end || right < start) return dValue;
+		if (left > end || right < start) return INIT_VALUE;
 		if (left <= start && end <= right) return tree[node];
 		int mid = (start + end) / 2;
 		ll lsum = query(node * 2, start, mid, left, right);

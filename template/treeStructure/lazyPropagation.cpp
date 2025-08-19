@@ -1,17 +1,17 @@
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;
+const ll INIT_VALUE = 0; // TODO
 
 struct LazyPropagation {
 	vector<ll> arr;
 	vector<ll> tree;
 	vector<ll> lazy;
-	static constexpr ll dValue = 0; // TODO
 	int sz;
 
 	inline ll merge(ll a, ll b) { return a + b; }
 	LazyPropagation() = default;
-	LazyPropagation(int sz): LazyPropagation(vector<ll>(sz, dValue)) {}
+	LazyPropagation(int sz): LazyPropagation(vector<ll>(sz, INIT_VALUE)) {}
 	LazyPropagation(const vector<ll>& a) {
 		sz = a.size();
 		arr = a;
@@ -58,7 +58,7 @@ struct LazyPropagation {
 	}
 	ll query(ll node, ll start, ll end, ll left, ll right) {
 		update_lazy(node, start, end);
-		if (left > end || right < start) return dValue;
+		if (left > end || right < start) return INIT_VALUE;
 		if (left <= start && end <= right) return tree[node];
 		int mid = (start + end) / 2;
 		ll lsum = query(node * 2, start, mid, left, right);
