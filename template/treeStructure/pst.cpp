@@ -15,7 +15,7 @@ struct PST {
         root.resize(1);
 	}
     // p에서 c로 분기
-	void newRoot(int c, int p) {
+	void newRoot(int p, int c) {
         assert(p < root.size());
         while (root.size() <= c) root.push_back(0);
         root[c] = tree.size();
