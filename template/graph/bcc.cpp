@@ -1,8 +1,13 @@
 #include <bits/stdc++.h>
 using namespace std;
+typedef long long ll;
 
-const int MAX_V = 100001;
-vector<int> adj[MAX_V];
+struct Edge {
+    int v, c, rev;
+};
+
+const int MAX_V = 300001;
+vector<Edge> adj[MAX_V];
 
 int ord[MAX_V], low[MAX_V];
 bool vis[MAX_V];
@@ -12,7 +17,8 @@ vector<int> bcc[MAX_V];
 void dfs(int v, int p) {
     ord[v] = ++cnt;
     low[v] = ord[v];
-    for (auto u: adj[v]) if (u != p) {
+    for (const auto& edge: adj[v]) if (edge.v != p) {
+        int u = edge.v;
         if (ord[u]) low[v] = min(low[v], ord[u]);
         else {
             dfs(u, v);
@@ -24,12 +30,24 @@ void dfs(int v, int p) {
 void color(int v, int c, int p) {
     if (c > 0) bcc[v].push_back(c);
     vis[v] = true;
-    for (auto u: adj[v]) if (u != p) {
-        if (vis[u]) continue;
+    for (auto& edge: adj[v]) {
+        int u = edge.v;
         if (low[u] >= ord[v]) {
-            bcc[v].push_back(++col);
-            color(u, col, v);
-        } else color(u, c, v);
+            if (!vis[u]) bcc[v].push_back(++col);
+            
+            if (edge.c == 0) {
+                edge.c = col;
+                adj[u][edge.rev].c = col;
+            }
+            
+            if (!vis[u]) color(u, col, v);
+        } else {
+            if (c > 0 && edge.c == 0) {
+                edge.c = c;
+                adj[u][edge.rev].c = c;
+            }
+            if (!vis[u]) color(u, c, v);
+        }
     }
 }
 
@@ -38,4 +56,9 @@ void color(int v, int c, int p) {
 void getBcc(int V) {
 	for (int i = 1; i < V; ++i) if (!ord[i]) dfs(i, 0);
     for (int i = 1; i < V; ++i) if (!vis[i]) color(i, 0, 0);
+}
+
+void addEdge(int u, int v) {
+    adj[u].push_back(Edge {v, 0, (int) adj[v].size()});
+    adj[v].push_back(Edge {u, 0, (int) adj[u].size() - 1});
 }
