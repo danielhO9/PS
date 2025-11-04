@@ -1,11 +1,14 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+const int SZ = 32;
+
 template<typename T>
 struct Matrix {
     int m, n;
 	vector<int> cidx;
     vector<vector<T>> entry;
+    Matrix() = default;
     Matrix(int m, int n) : m(m), n(n), cidx(n), entry(m, vector<T>(n)) { iota(cidx.begin(), cidx.end(), 0); }
     Matrix(int m_) : Matrix(m_, m_) {}
 
@@ -20,12 +23,10 @@ struct Matrix {
     }
     uint32_t operator*(const uint32_t& x) {
         uint32_t ret = 0;
-        for (int i = 0; i < 32; ++i) {
-            int tmp = 0;
-            for (int j = 0; j < 32; ++j) if (entry[i][cidx[j]] & (x >> j)) {
-                tmp ^= 1;
+        for (int i = 0; i < SZ; ++i) {
+            for (int j = 0; j < SZ; ++j) if (entry[i][cidx[j]] & (x >> j)) {
+                ret ^= (1ull << i);
             }
-            if (tmp) ret |= (1 << i);
         }
         return ret;
     }
@@ -70,7 +71,7 @@ Matrix<T> inverse(const Matrix<T>& A) {
 }
 
 template<typename T>
-Matrix<T> pow(const Matrix<T>& A, long long n) {
+Matrix<T> pow(const Matrix<T>& A, uint32_t n) {
     assert(A.n == A.m);
     if (n == 0) {
         Matrix<T> ret {A.n};
@@ -90,27 +91,44 @@ uint32_t xorshift32(uint32_t x) {
     return x;
 }
 
+Matrix<int> A, B, Ainv;
+
+void init(uint32_t x, uint32_t t) {
+    A = Matrix<int> {SZ};
+    for (int i = 0; i < SZ; ++i) {
+        uint32_t nxt = xorshift32(1ull << i);
+        for (int j = 0; j < SZ; ++j) A(j, i) = ((nxt >> j) & 1);
+    }
+    Matrix<int> X{SZ}, Y{SZ};
+    for (int i = 0; i < SZ; ++i) {
+        for (int j = 0; j < SZ; ++j) X(j, i) = ((x >> j) & 1);
+        for (int j = 0; j < SZ; ++j) Y(j, i) = ((t >> j) & 1);
+        x = xorshift32(x);
+        t = xorshift32(t);
+    }
+    Matrix<int> Xinv = inverse(X);
+    B = Y * Xinv;
+    Ainv = inverse(A);
+}
+
 unordered_map<uint32_t, uint32_t> m;
 
 int main() {
-    Matrix<int> A {32};
-    for (int i = 0; i < 32; ++i) {
-        uint32_t tmp = xorshift32(1 << i);
-        for (int j = 0; j < 32; ++j) A(j, i) = ((tmp >> j) & 1);
-    }
-    Matrix<int> Ainv = inverse(A);
+    uint32_t x, t; cin >> x >> t;
+    init(x, t);
     uint32_t sqrt = (1 << 16);
     Matrix<int> Asqrt = pow(A, sqrt);
-    uint32_t x, t; cin >> x >> t;
+    uint32_t cur = 1;
     for (uint32_t i = 0; i < sqrt; ++i) {
-        assert(x != 0);
-        if (m.find(x) == m.end()) m[x] = sqrt * i;
-        x = Asqrt * x;
+        m[cur] = i * sqrt;
+        cur = Asqrt * cur;
     }
-    uint32_t ans = 4294967295ll;
+    cur = B * 1;
     for (uint32_t i = 0; i < sqrt; ++i) {
-        if (m.find(t) != m.end()) ans = min(ans, i + m[t]);
-        t = Ainv * t;
+        if (m.find(cur) != m.end()) {
+            cout << i + m[cur] + 1;
+            return 0;
+        }
+        cur = Ainv * cur;
     }
-    cout << ans + 1;
 }
