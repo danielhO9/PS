@@ -10,6 +10,7 @@
 *.plist
 *.yml
 *tempCodeRunnerFile.cpp
+*snippets-builder.cpp
 
 # Unignore all dirs
 !*/

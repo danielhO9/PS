@@ -15,7 +15,7 @@ struct LazyPropagation {
 	LazyPropagation(const vector<ll>& a) {
 		sz = a.size();
 		arr = a;
-		int h = (int)ceil(log2(sz));
+		int h = 31 - __builtin_clz(sz);
 		int tree_size = (1 << (h + 1));
 		tree = vector<ll>(tree_size);
         lazy = vector<ll>(tree_size);
@@ -24,7 +24,7 @@ struct LazyPropagation {
 	void init(ll node, ll start, ll end) {
 		if (start == end) tree[node] = arr[start];
 		else {
-			int mid = (start + end) / 2;
+			int mid = (start + end) >> 1;
 			init(node * 2, start, mid);
 			init(node * 2 + 1, mid + 1, end);
 			tree[node] = merge(tree[node * 2], tree[node * 2 + 1]);
@@ -51,7 +51,7 @@ struct LazyPropagation {
 			}
 			return;
 		}
-		int mid = (start + end) / 2;
+		int mid = (start + end) >> 1;
 		update_range(node * 2, start, mid, left, right, diff);
 		update_range(node * 2 + 1, mid + 1, end, left, right, diff);
 		tree[node] = merge(tree[node * 2], tree[node * 2 + 1]);
@@ -60,7 +60,7 @@ struct LazyPropagation {
 		update_lazy(node, start, end);
 		if (left > end || right < start) return 0; // TODO
 		if (left <= start && end <= right) return tree[node];
-		int mid = (start + end) / 2;
+		int mid = (start + end) >> 1;
 		ll lsum = query(node * 2, start, mid, left, right);
 		ll rsum = query(node * 2 + 1, mid + 1, end, left, right);
 		return merge(lsum, rsum);

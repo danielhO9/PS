@@ -9,7 +9,7 @@ bool inConcave(const Point<T>& pt, const vector<Point<T>>& pts) {
 	vector<Line<ll>> lines;
 	const int n = pts.size();
     for (int i = 0; i < n; ++i) lines.push_back(Line<ll>(pts[i], pts[(i + 1) % n]));
-	Line<ll> line {pt, Point<ll> {pt.x + 1000000000ll, pt.y + 1}}; // non parallel
+	Line<ll> line {pt, Point<ll> {pt.x + 1000000000ll, pt.y + 1}}; // not parallel
 	for (auto j: lines) if (j.onSegment(pt)) return true;
 	int cnt = 0;
 	for (auto j: lines) {

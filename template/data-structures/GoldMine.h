@@ -28,7 +28,7 @@ struct SegmentTree {
 	SegmentTree(const vector<ll>& a) {
 		sz = a.size();
 		arr = a;
-		int h = (int) ceil(log2(sz));
+		int h = 31 - __builtin_clz(sz);
 		int tree_size = (1 << (h + 1));
 		tree = vector<Node>(tree_size);
 		init(1, 0, sz - 1);
@@ -36,7 +36,7 @@ struct SegmentTree {
 	void init(int node, int start, int end) {
 		if (start == end) tree[node] = Node {arr[start]};
 		else {
-			int mid = (start + end) / 2;
+			int mid = (start + end) >> 1;
 			init(node * 2, start, mid);
 			init(node * 2 + 1, mid + 1, end);
 			tree[node] = merge(tree[node * 2], tree[node * 2 + 1]);
@@ -49,7 +49,7 @@ struct SegmentTree {
 			tree[node] = Node {arr[index]};
 			return;
 		}
-		int mid = (start + end) / 2;
+		int mid = (start + end) >> 1;
 		update(node * 2, start, mid, index, val);
 		update(node * 2 + 1, mid + 1, end, index, val);
 		tree[node] = merge(tree[node * 2], tree[node * 2 + 1]);
@@ -57,7 +57,7 @@ struct SegmentTree {
 	Node query(int node, int start, int end, int left, int right) {
 		if (left > end || right < start) return Node {INT32_MIN};
 		if (left <= start && end <= right) return tree[node];
-		int mid = (start + end) / 2;
+		int mid = (start + end) >> 1;
 		Node l = query(node * 2, start, mid, left, right);
 		Node r = query(node * 2 + 1, mid + 1, end, left, right);
 		return merge(l, r);

@@ -18,7 +18,7 @@ struct PST {
     // p -> c
 	void newRoot(int p, int c) {
         assert(p < root.size());
-        while (root.size() <= c) root.push_back(0);
+		if (root.size() <= c) root.resize(c);
         root[c] = tree.size();
 		tree.push_back(Node{tree[root[p]]});
         return;
@@ -27,7 +27,7 @@ struct PST {
 		if (index < start || index > end) return;
 		tree[node].val += val;
 		if (start == end) return;
-		int mid = (start + end) / 2;
+		int mid = (start + end) >> 1;
 		if (index <= mid) {
 			int lidx = tree[node].l;
 			tree[node].l = tree.size();
@@ -44,7 +44,7 @@ struct PST {
 	ll query(int node, int start, int end, int left, int right) {
 		if (left > end || right < start) return 0;
 		if (left <= start && end <= right) return tree[node].val;
-        int mid = (start + end) / 2;
+        int mid = (start + end) >> 1;
 		ll lsum = query(tree[node].l, start, mid, left, right);
 		ll rsum = query(tree[node].r, mid + 1, end, left, right);
 		return lsum + rsum;
@@ -52,7 +52,7 @@ struct PST {
     int kth(int l, int r, int start, int end, ll k) {
         if (start == end) return start;
         ll tmp = tree[tree[r].l].val - tree[tree[l].l].val;
-        int mid = (start + end) / 2;
+        int mid = (start + end) >> 1;
         if (tmp >= k) return kth(tree[l].l, tree[r].l, start, mid, k);
         else return kth(tree[l].r, tree[r].r, mid + 1, end, k - tmp);
     }

@@ -7,10 +7,10 @@
 struct UF {
 	vector<int> par, rk;
 
-	UF(int _sz) {
-		par.resize(_sz);
-		rk.resize(_sz);
-		for (int i = 0; i < _sz; ++i) par[i] = i;
+	UF(int sz) {
+		par.resize(sz);
+		rk.resize(sz);
+		for (int i = 0; i < sz; ++i) par[i] = i;
 	}
 	int find(int x) {
 		if (par[x] == x) return x;

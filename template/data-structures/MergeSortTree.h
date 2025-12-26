@@ -9,10 +9,10 @@ struct MergeSortTree {
 	int sz;
 
 	MergeSortTree() = default;
-	MergeSortTree(vector<ll>& a) {
+	MergeSortTree(const vector<ll>& a) {
 		sz = a.size();
 		arr = a;
-		int h = (int)ceil(log2(sz));
+		int h = 31 - __builtin_clz(sz);
 		int tree_size = (1 << (h + 1));
 		tree = vector<vector<ll>>(tree_size);
 		init(1, 0, sz - 1);
@@ -20,7 +20,7 @@ struct MergeSortTree {
 	void init(int node, int start, int end) {
 		if (start == end) tree[node].push_back(arr[start]);
 		else {
-			int mid = (start + end) / 2;
+			int mid = (start + end) >> 1;
 			init(node * 2, start, mid);
 			init(node * 2 + 1, mid + 1, end);
 			tree[node].resize(tree[node * 2].size() + tree[node * 2 + 1].size());

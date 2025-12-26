@@ -24,8 +24,6 @@ void dfs(vector<pair<int, int>>& ret, int v, int p) {
 
 // V: maximum vertex + 1
 // 1-index
-vector<pair<int, int>> getEdge(int V) {
-	vector<pair<int, int>> ret;
+void getEdge(vector<pair<int, int>>& ret, int V) {
 	for (int i = 1; i < V; ++i) if (!ord[i]) dfs(ret, i, 0);
-	return ret;
 }

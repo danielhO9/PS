@@ -12,10 +12,10 @@ struct UF {
     vector<tuple<int, int, int>> st;
 
     UF() = default;
-	UF(int _sz) {
-		par.resize(_sz);
-		rk.resize(_sz);
-		for (int i = 0; i < _sz; ++i) par[i] = i;
+	UF(int sz) {
+		par.resize(sz);
+		rk.resize(sz);
+		for (int i = 0; i < sz; ++i) par[i] = i;
 	}
     int time() { return st.size(); }
     void rollback(int t) {
@@ -48,13 +48,13 @@ vector<vector<Edge>> tree;
 vector<pair<int, int>> queries;
 vector<int> ans;
 
-void update(int node, int start, int end, Edge e) {
+void update(int node, int start, int end, const Edge& e) {
     if (e.s > end || e.e < start) return;
     if (e.s <= start && end <= e.e) {
         tree[node].push_back(e);
         return;
     }
-	int mid = (start + end) / 2;
+	int mid = (start + end) >> 1;
     update(node * 2, start, mid, e);
     update(node * 2 + 1, mid + 1, end, e);
 }
@@ -63,9 +63,11 @@ void dnc(int node, int start, int end) {
     int t = uf.time();
 	for (auto i: tree[node]) uf.merge(i.u, i.v);
 	if (start == end) {
-        if (uf.find(queries[start].first) == uf.find(queries[start].second)) ans[start] = lv;
+        if (uf.find(queries[start].first) == uf.find(queries[start].second)) {
+            // TODO
+        }
 	} else {
-		int mid = (start + end) / 2;
+		int mid = (start + end) >> 1;
 		dnc(node * 2, start, mid);
 		dnc(node * 2 + 1, mid + 1, end);
 	}
@@ -77,8 +79,8 @@ int N, Q;
 void solve() {
     uf = UF {N};
 
-    ans = vector<int>(Q, -1);
-    int h = (int)ceil(log2(Q));
+    ans.resize(Q, -1);
+    int h = 31 - __builtin_clz(Q);
 	int tree_size = (1 << (h + 1));
     tree.resize(tree_size);
 

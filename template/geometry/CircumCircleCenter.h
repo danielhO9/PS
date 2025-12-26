@@ -1,8 +1,7 @@
 /**
- * Description: Computes the center and radius of the circumcircle of a triangle.
+ * Description: Computes the center and radius of the circumcircle of a triangle. Consider double.
  * Time: $O(1)$.
  */
-// circumcircle center
 template<typename T>
 Circle<T> ccCenter(const Point<T>& a, const Point<T>& b, const Point<T>& c) {
 	Point<T> nb = c - a, nc = b - a;

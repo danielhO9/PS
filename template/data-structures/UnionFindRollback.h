@@ -10,10 +10,10 @@ struct UnionFindRollback {
     vector<tuple<int, int, int>> st;
 
     UnionFindRollback() = default;
-	UnionFindRollback(int _sz) {
-		par.resize(_sz);
-		rk.resize(_sz);
-		for (int i = 0; i < _sz; ++i) par[i] = i;
+	UnionFindRollback(int sz) {
+		par.resize(sz);
+		rk.resize(sz);
+		for (int i = 0; i < sz; ++i) par[i] = i;
 	}
     int time() { return st.size(); }
     void rollback(int t) {

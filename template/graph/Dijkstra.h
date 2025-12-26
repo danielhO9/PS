@@ -8,8 +8,8 @@ vector<pair<int, ll>> adj[MAX_V];
 
 // time complexity: (V+E)logV
 // V: maximum vertex + 1
-vector<ll> dijkstra(int src, int V) {
-	vector<ll> dist(V, LLONG_MAX);
+void dijkstra(vector<ll>& dist, int src, int V) {
+	dist.resize(V, LLONG_MAX);
 	dist[src] = 0;
 	priority_queue<pair<ll, int>> pq;
 	pq.push(make_pair(0, src));
@@ -27,5 +27,4 @@ vector<ll> dijkstra(int src, int V) {
 			}
 		}
 	}
-	return dist;
 }

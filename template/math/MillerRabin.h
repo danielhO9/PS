@@ -35,7 +35,7 @@ bool millerRabin(__int128_t n) {
 				if (temp == 1) break;
 				else return false;
 			}
-			k /= 2;
+			k >>= 1;
 		}
 	}
 	return true;

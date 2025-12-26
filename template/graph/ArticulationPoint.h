@@ -29,8 +29,6 @@ void dfs(vector<int>& ret, int v, int p) {
 
 // V: maximum vertex + 1
 // 1-index
-vector<int> getPoint(int V) {
-	vector<int> ret;
+void getPoint(vector<int>& ret, int V) {
 	for (int i = 1; i < V; ++i) if (!ord[i]) dfs(ret, i, 0);
-	return ret;
 }

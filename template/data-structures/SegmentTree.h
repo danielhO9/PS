@@ -8,13 +8,13 @@ struct SegmentTree {
 	vector<ll> tree;
 	int sz;
 
-	ll merge(ll a, ll b) { return a + b; }
+	inline ll merge(ll a, ll b) { return a + b; }
 	SegmentTree() = default;
 	SegmentTree(int sz): SegmentTree(vector<ll>(sz, 0)) {} // TODO
 	SegmentTree(const vector<ll>& a) {
 		sz = a.size();
 		arr = a;
-		int h = (int)ceil(log2(sz));
+		int h = 31 - __builtin_clz(sz);
 		int tree_size = (1 << (h + 1));
 		tree = vector<ll>(tree_size);
 		init(1, 0, sz - 1);
@@ -22,7 +22,7 @@ struct SegmentTree {
 	void init(int node, int start, int end) {
 		if (start == end) tree[node] = arr[start];
 		else {
-			int mid = (start + end) / 2;
+			int mid = (start + end) >> 1;
 			init(node * 2, start, mid);
 			init(node * 2 + 1, mid + 1, end);
 			tree[node] = merge(tree[node * 2], tree[node * 2 + 1]);
@@ -35,7 +35,7 @@ struct SegmentTree {
 			tree[node] += val;
 			return;
 		}
-		int mid = (start + end) / 2;
+		int mid = (start + end) >> 1;
 		update(node * 2, start, mid, index, val);
 		update(node * 2 + 1, mid + 1, end, index, val);
 		tree[node] = merge(tree[node * 2], tree[node * 2 + 1]);
@@ -43,7 +43,7 @@ struct SegmentTree {
 	ll query(int node, int start, int end, int left, int right) {
 		if (left > end || right < start) return 0; // TODO
 		if (left <= start && end <= right) return tree[node];
-		int mid = (start + end) / 2;
+		int mid = (start + end) >> 1;
 		ll lsum = query(node * 2, start, mid, left, right);
 		ll rsum = query(node * 2 + 1, mid + 1, end, left, right);
 		return merge(lsum, rsum);
