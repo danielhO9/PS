@@ -11,6 +11,7 @@
 *.yml
 *tempCodeRunnerFile.cpp
 *snippets-builder.cpp
+*snippets-builder.sh
 
 # Unignore all dirs
 !*/

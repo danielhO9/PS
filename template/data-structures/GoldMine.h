@@ -28,7 +28,7 @@ struct SegmentTree {
 	SegmentTree(const vector<ll>& a) {
 		sz = a.size();
 		arr = a;
-		int h = 31 - __builtin_clz(sz);
+		int h = 32 - __builtin_clz(sz - 1);
 		int tree_size = (1 << (h + 1));
 		tree = vector<Node>(tree_size);
 		init(1, 0, sz - 1);
