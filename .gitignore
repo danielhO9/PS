@@ -12,6 +12,7 @@
 *tempCodeRunnerFile.cpp
 *snippets-builder.cpp
 *snippets-builder.sh
+*.h
 
 # Unignore all dirs
 !*/

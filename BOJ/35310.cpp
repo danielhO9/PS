@@ -3,41 +3,32 @@ using namespace std;
 typedef long long ll;
 
 const ll MOD = 998244353;
-
 ll N, M;
-string S;
-ll dp[25 * 3000 + 1];
-ll prefix_sum_dp[25 * 3000 + 1];
-
-// dp[i][i]: using i times change for j prefix string
+string s;
+ll dp[3000 * 25 + 1];
+ll psm[3000 * 25 + 1];
 
 int main() {
     ios::sync_with_stdio(0); cin.tie(0);
     cin >> N >> M;
-    cin >> S;
-    M = min(M, 25ll * 3000 + 1);
+    cin >> s;
+    M = min(M, N * 25);
+
     dp[0] = 1;
-    
     for (int i = 0; i < N; ++i) {
-        int max_opr = i * 25;
-        prefix_sum_dp[0] = dp[0];
-        for (int idx = 1; idx <= max_opr; ++idx) {
-            prefix_sum_dp[idx] = dp[idx] + prefix_sum_dp[idx - 1];
-            prefix_sum_dp[idx] %= MOD;
-        }
-        for (int idx = 0; idx <= max_opr; ++idx) {
-            dp[idx] = prefix_sum_dp[idx];
-            if (idx - 26 >= 0) {
-                dp[idx] -= prefix_sum_dp[idx - 26];
-                dp[idx] += MOD;
-                dp[idx] %= MOD;
+        int n = (i + 1) * 25;
+        psm[0] = dp[0];
+        for (int j = 1; j <= n; ++j) psm[j] = (psm[j - 1] + dp[j]) % MOD;
+        for (int j = 1; j <= n; ++j) {
+            dp[j] = psm[j];
+            if (j - 26 >= 0) {
+                dp[j] -= psm[j - 26];
+                dp[j] += MOD;
+                dp[j] %= MOD;
             }
         }
     }
-    ll answer = 0;
-    for (int i = 0; i <= M; ++i) {
-        answer += dp[i];
-        answer %= MOD;
-    }
-    cout << answer;
+    ll ans = 0;
+    for (int i = 0; i <= M; ++i) ans = (ans + dp[i]) % MOD;
+    cout << ans;
 }
