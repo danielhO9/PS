@@ -13,6 +13,7 @@
 *snippets-builder.cpp
 *snippets-builder.sh
 *.h
+*.clangd
 
 # Unignore all dirs
 !*/
