@@ -21,3 +21,4 @@
 ### VisualStudioCode ###
 .vscode/*
 .DS_Store
+codeground/.vscode/*
