@@ -7,23 +7,24 @@
 struct Node {
 	ll lmx, rmx, mx, sm;
 
-	Node() = default;
+	Node() { lmx = rmx = mx = sm = INT32_MIN; }
 	Node(ll x): lmx(x), rmx(x), mx(x), sm(x) {}
 };
+
+inline Node merge(const Node& l, const Node& r) {
+	Node ret{};
+	ret.lmx = max(l.lmx, l.sm + r.lmx);
+	ret.rmx = max(r.rmx, r.sm + l.rmx);
+	ret.mx = max({l.mx, r.mx, l.rmx + r.lmx});
+	ret.sm = l.sm + r.sm;
+	return ret;
+}
 
 struct SegmentTree {
 	vector<ll> arr;
 	vector<Node> tree;
 	int sz;
 
-	inline Node merge(const Node& l, const Node& r) {
-		Node ret{};
-		ret.lmx = max(l.lmx, l.sm + r.lmx);
-		ret.rmx = max(r.rmx, r.sm + l.rmx);
-		ret.mx = max({l.mx, r.mx, l.rmx + r.lmx});
-		ret.sm = l.sm + r.sm;
-		return ret;
-	}
 	SegmentTree() = default;
 	SegmentTree(const vector<ll>& a) {
 		sz = a.size();
@@ -55,7 +56,7 @@ struct SegmentTree {
 		tree[node] = merge(tree[node * 2], tree[node * 2 + 1]);
 	}
 	Node query(int node, int start, int end, int left, int right) {
-		if (left > end || right < start) return Node {INT32_MIN};
+		if (left > end || right < start) return Node {};
 		if (left <= start && end <= right) return tree[node];
 		int mid = (start + end) >> 1;
 		Node l = query(node * 2, start, mid, left, right);

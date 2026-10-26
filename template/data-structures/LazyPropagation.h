@@ -32,10 +32,11 @@ struct LazyPropagation {
 	}
 	void update_lazy(ll node, ll start, ll end) {
 		if (lazy[node] != 0) {
-			tree[node] += (end - start + 1) * lazy[node]; // TODO
+			// TODO
+			tree[node] += (end - start + 1) * lazy[node];
 			if (start != end) {
-				lazy[node * 2] = merge(lazy[node * 2], lazy[node]);
-				lazy[node * 2 + 1] = merge(lazy[node * 2 + 1], lazy[node]);
+				lazy[node * 2] += lazy[node];
+				lazy[node * 2 + 1] += lazy[node];
 			}
 			lazy[node] = 0;
 		}
@@ -44,10 +45,11 @@ struct LazyPropagation {
 		update_lazy(node, start, end);
 		if (left > end || right < start) return;
 		if (left <= start && end <= right) {
-			tree[node] += (end - start + 1) * diff; // TODO
+			// TODO
+			tree[node] += (end - start + 1) * diff;
 			if (start != end) {
-				lazy[node * 2] = merge(lazy[node * 2], diff); // TODO
-				lazy[node * 2 + 1] = merge(lazy[node * 2 + 1], diff); // TODO
+				lazy[node * 2] += diff;
+				lazy[node * 2 + 1] += diff;
 			}
 			return;
 		}
